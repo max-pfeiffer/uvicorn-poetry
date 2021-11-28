@@ -24,6 +24,9 @@ if [[ -n $LOG_LEVEL ]]
         echo "Invalid log level!"
         exit 1
     fi
+else
+  # Default log level
+  OPTIONS_ARRAY+=("--log-level ${ALLOWED_LOG_LEVEL[info]}")
 fi
 
 if [[ -n $RELOAD ]]

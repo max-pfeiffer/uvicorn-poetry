@@ -6,7 +6,7 @@ import docker
 from docker.models.images import Image
 
 from build.constants import (
-    UVICORN_GUNICORN_POETRY_IMAGE_NAME,
+    UVICORN_POETRY_IMAGE_NAME,
     BASE_IMAGES,
     FAST_API_MULTISTAGE_IMAGE_NAME,
 )
@@ -34,7 +34,7 @@ class UvicornGunicornPoetryImage(DockerImage):
         # An image name is made up of slash-separated name components, optionally prefixed by a registry hostname.
         # see: https://docs.docker.com/engine/reference/commandline/tag/
         # self.image_name = 'pfeiffermax/uvicorn-gunicorn-poetry'
-        self.image_name = UVICORN_GUNICORN_POETRY_IMAGE_NAME
+        self.image_name = UVICORN_POETRY_IMAGE_NAME
 
     def build(self, target_architecture: str, version: str = None) -> Image:
         if version is not None:
@@ -78,7 +78,7 @@ class FastApiMultistageImage(DockerImage):
         self.image_tag = f"{self.version_tag}-{target_architecture}"
 
         buildargs: Dict[str, str] = {
-            "BASE_IMAGE_NAME_AND_TAG": f"{UVICORN_GUNICORN_POETRY_IMAGE_NAME}:{self.image_tag}"
+            "BASE_IMAGE_NAME_AND_TAG": f"{UVICORN_POETRY_IMAGE_NAME}:{self.image_tag}"
         }
         image: Image = self.docker_client.images.build(
             path=self.absolute_docker_image_directory_path,
