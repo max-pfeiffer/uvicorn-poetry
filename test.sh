@@ -11,8 +11,6 @@ declare -a ARGUMENTS=('--workers 1'
                       '--host 0.0.0.0'
                       '--port 80')
 
-LOG_LEVEL='blub'
-
 if [[ -n $LOG_LEVEL ]]
   then
     if [[ -n "${ALLOWED_LOG_LEVEL[$LOG_LEVEL]}" ]]
@@ -36,3 +34,6 @@ for element in "${ARGUMENTS[@]}"
 do
   echo $element
 done
+
+
+echo "${ARGUMENTS[*]}"
