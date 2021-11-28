@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 
 from build.constants import (
     TARGET_ARCHITECTURES,
-    UVICORN_GUNICORN_POETRY_IMAGE_NAME,
 )
 from build.images import UvicornGunicornPoetryImage
 

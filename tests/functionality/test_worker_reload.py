@@ -33,4 +33,7 @@ def test_worker_reload(docker_client, target_architecture) -> None:
         time.sleep(SLEEP_TIME)
 
         logs: str = test_container.logs().decode("utf-8")
-        assert "WARNING:  StatReload detected file change in 'app/main.py'. Reloading..." in logs
+        assert (
+            "WARNING:  StatReload detected file change in 'app/main.py'. Reloading..."
+            in logs
+        )

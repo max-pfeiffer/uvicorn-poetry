@@ -24,9 +24,7 @@ def prepare_docker_env(docker_client) -> None:
     except NotFound:
         pass
     # Delete old existing images
-    for old_image in docker_client.images.list(
-        UVICORN_POETRY_IMAGE_NAME
-    ):
+    for old_image in docker_client.images.list(UVICORN_POETRY_IMAGE_NAME):
         for tag in old_image.tags:
             docker_client.images.remove(tag, force=True)
     for old_image in docker_client.images.list(FAST_API_MULTISTAGE_IMAGE_NAME):
@@ -43,9 +41,7 @@ def prepare_docker_env(docker_client) -> None:
     except NotFound:
         pass
     # Delete old existing images
-    for old_image in docker_client.images.list(
-        UVICORN_POETRY_IMAGE_NAME
-    ):
+    for old_image in docker_client.images.list(UVICORN_POETRY_IMAGE_NAME):
         for tag in old_image.tags:
             docker_client.images.remove(tag, force=True)
     for old_image in docker_client.images.list(FAST_API_MULTISTAGE_IMAGE_NAME):
