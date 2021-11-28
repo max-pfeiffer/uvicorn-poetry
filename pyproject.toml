@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "uvicorn-poetry"
+version = "1.0.0"
+description = "Uvicorn ASGI server with Poetry as dependency manager for running web applications."
+authors = ["Max Pfeiffer <max@maxpfeiffer.ch>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "3.9.*"
+python-dotenv = "0.19.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "6.2.5"
+pytest-cov = "3.0.0"
+coverage = "6.1.2"
+docker = "5.0.3"
+requests = "2.25.1"
+black = "21.10b0"
+
+# https://docs.pytest.org/en/latest/reference/customize.html
+[tool.pytest.ini_options]
+testpaths = [
+    "tests",
+]
+
+# https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html#configuration-via-a-file
+[tool.black]
+line-length = 80
+target-version = ['py39']
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
