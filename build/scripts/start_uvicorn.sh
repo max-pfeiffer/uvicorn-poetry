@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -e
 
 # Process environment variables for uvicorn options
 declare -A ALLOWED_LOG_LEVEL=([critical]='critical'
