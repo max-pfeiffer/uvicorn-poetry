@@ -24,7 +24,7 @@ def test_worker_reload(docker_client, target_architecture) -> None:
     )
     time.sleep(SLEEP_TIME)
 
-    for test in range(0, 3):
+    for number in range(1, 4):
         (exit_code, output) = test_container.exec_run(
             ["touch", "/application_root/app/main.py"]
         )
@@ -33,7 +33,6 @@ def test_worker_reload(docker_client, target_architecture) -> None:
         time.sleep(SLEEP_TIME)
 
         logs: str = test_container.logs().decode("utf-8")
-        assert (
-            "WARNING:  StatReload detected file change in 'app/main.py'. Reloading..."
-            in logs
-        )
+        logs_list: list[str] = logs.split("\n")
+        log_statement_count: int = len([line for line in logs_list if line == "WARNING:  StatReload detected file change in 'app/main.py'. Reloading..."])
+        assert log_statement_count == number

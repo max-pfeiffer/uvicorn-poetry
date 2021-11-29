@@ -13,3 +13,72 @@ Any feedback is highly appreciated and will be considered.
 Docker Hub: [pfeiffermax/uvicorn-poetry](https://hub.docker.com/r/pfeiffermax/uvicorn-poetry)
 
 GitHub Repository: [https://github.com/max-pfeiffer/uvicorn-poetry](https://github.com/max-pfeiffer/uvicorn-poetry)
+
+## Usage
+The image just provides a platform that you can use to build upon your own multistage builds. So it consequently does not contain an
+application itself. Please check out the [example application](https://github.com/max-pfeiffer/uvicorn-poetry/tree/main/examples/fast_api_multistage_build)
+on how to use that image and build containers efficiently.
+
+Please be aware that your application needs an application layout without src folder which is proposed in
+[fastapi-realworld-example-app](https://github.com/nsidnev/fastapi-realworld-example-app).
+The application and test structure needs to be like that:
+```bash
+├── Dockerfile
+├── app
+│    ├── __init__.py
+│    └── main.py
+├── poetry.lock
+├── pyproject.toml
+└── tests
+    ├── __init__.py
+    ├── conftest.py
+    └── test_api
+        ├── __init__.py
+        ├── test_items.py
+        └── test_root.py
+```
+Please be aware that you need to provide a pyproject.toml file to specify your Python package dependencies for Poetry and configure
+dependencies like Pytest. Poetry dependencies must at least contain the following to work:
+* python = "3.9.8"
+* uvicorn = "0.15.0"
+
+If your application uses FastAPI framework this needs to be added as well:
+* fastapi = "0.70.0"
+
+**IMPORTANT:** make sure you have a [.dockerignore file](https://github.com/max-pfeiffer/uvicorn-poetry/blob/main/examples/fast_api_multistage_build/.dockerignore)
+in your application root which excludes your local virtual environment in .venv! Otherwise you will have an issue activating that virtual
+environment when running the container.
+
+## Image Features
+1. Supported architectures: currently only Python v3.9.8, Debian or Debian-slim
+2. Poetry is available as Python package dependency management tool
+3. A virtual environment for the application and application server
+4. Configuration of Uvicorn through environment variables
+5. Additional entrypoints for [pytest](https://github.com/max-pfeiffer/uvicorn-poetry/blob/main/build/scripts/pytest_entrypoint.sh)
+   and [black](https://github.com/max-pfeiffer/uvicorn-poetry/blob/main/build/scripts/black_entrypoint.sh) which can be used in
+   multi stage builds for building docker executables
+
+## Configuration
+Configuration is done trough the following environment variables during docker build. For everything alse Uvicorn uses it's defaults.
+I will add more environment variables in the future. If you would like to have something specific send me a pull request or drop me a line.
+For all the following configuration options please see always the
+[official Uvicorn documentation](https://www.uvicorn.org/settings/)
+if you would like to do a deep dive. Following environment variables are supported:
+
+### [Logging](https://www.uvicorn.org/settings/#logging)
+`LOG_LEVEL` : The granularity of Error log outputs. Valid level names are:
+* debug
+* trace
+* info
+* warning
+* error
+* critical
+
+**default:** `info`
+
+### [Development](https://www.uvicorn.org/settings/#development)
+`RELOAD` : Enable auto-reload.
+* true
+* false
+
+**default:** `false`
