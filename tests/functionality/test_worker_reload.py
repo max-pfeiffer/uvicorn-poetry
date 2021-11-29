@@ -34,5 +34,12 @@ def test_worker_reload(docker_client, target_architecture) -> None:
 
         logs: str = test_container.logs().decode("utf-8")
         logs_list: list[str] = logs.split("\n")
-        log_statement_count: int = len([line for line in logs_list if line == "WARNING:  StatReload detected file change in 'app/main.py'. Reloading..."])
+        log_statement_count: int = len(
+            [
+                line
+                for line in logs_list
+                if line
+                == "WARNING:  StatReload detected file change in 'app/main.py'. Reloading..."
+            ]
+        )
         assert log_statement_count == number

@@ -24,9 +24,7 @@ def test_worker_reload(docker_client, target_architecture) -> None:
     )
     time.sleep(SLEEP_TIME)
 
-    (exit_code, output) = test_container.exec_run(
-        ["poetry", "--version"]
-    )
+    (exit_code, output) = test_container.exec_run(["poetry", "--version"])
     assert exit_code == 0
     assert "Poetry version 1.1.11" in output.decode("utf-8")
 
