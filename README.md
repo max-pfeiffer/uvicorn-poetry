@@ -59,7 +59,7 @@ environment when running the container.
    multi stage builds for building docker executables
 
 ## Configuration
-Configuration is done trough the following environment variables during docker build. For everything alse Uvicorn uses it's defaults.
+Configuration is done trough the following environment variables during docker build. For everything else Uvicorn uses it's defaults.
 I will add more environment variables in the future. If you would like to have something specific send me a pull request or drop me a line.
 For all the following configuration options please see always the
 [official Uvicorn documentation](https://www.uvicorn.org/settings/)

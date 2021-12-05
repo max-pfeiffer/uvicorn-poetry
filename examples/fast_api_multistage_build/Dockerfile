@@ -1,7 +1,11 @@
 ARG BASE_IMAGE_NAME_AND_TAG=pfeiffermax/uvicorn-poetry:1.0.1-python3.9.8-slim-bullseye
 FROM ${BASE_IMAGE_NAME_AND_TAG} as base-image
+ENV LOG_CONFIG_FILE=/application_server/logging_configuration_file.yaml
 
 WORKDIR /application_root
+
+# Adding log configuration for Uvicorn
+COPY ./application_server/logging_configuration_file.yaml /application_server/
 
 # install [tool.poetry.dependencies]
 # this will install virtual environment into /.venv because of POETRY_VIRTUALENVS_IN_PROJECT=true

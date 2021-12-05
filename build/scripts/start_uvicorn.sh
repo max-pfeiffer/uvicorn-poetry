@@ -37,6 +37,12 @@ if [[ -n $RELOAD ]]
     fi
 fi
 
+if [[ -n $LOG_CONFIG_FILE ]]
+  then
+    OPTIONS_ARRAY+=("--log-config $LOG_CONFIG_FILE")
+fi
+
+# Expand options
 OPTIONS_STRING="${OPTIONS_ARRAY[*]}"
 
 # Start Gunicorn
