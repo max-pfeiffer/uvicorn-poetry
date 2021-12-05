@@ -1,6 +1,6 @@
 [![codecov](https://codecov.io/gh/max-pfeiffer/uvicorn-poetry/branch/main/graph/badge.svg?token=WQI2SJJLZN)](https://codecov.io/gh/max-pfeiffer/uvicorn-poetry)
 # uvicorn-poetry
-This image provides a platform to run Python applications with [Uvicorn](https://github.com/encode/uvicorn) on [Kubernetes](https://kubernetes.io/) container orchestration system.
+This Docker image provides a platform to run Python applications with [Uvicorn](https://github.com/encode/uvicorn) on [Kubernetes](https://kubernetes.io/) container orchestration system.
 It provides [Poetry](https://python-poetry.org/) for managing dependencies and setting up a virtual environment in the container.
 
 This image aims to follow the best practices for a production grade container image for hosting Python web applications based
