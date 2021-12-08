@@ -1,11 +1,7 @@
 ARG BASE_IMAGE_NAME_AND_TAG=pfeiffermax/uvicorn-poetry:1.0.1-python3.9.8-slim-bullseye
 FROM ${BASE_IMAGE_NAME_AND_TAG} as base-image
-ENV LOG_CONFIG_FILE=/application_server/logging_configuration_file.yaml
 
 WORKDIR /application_root
-
-# Adding log configuration for Uvicorn
-COPY ./application_server/logging_configuration_file.yaml /application_server/
 
 # install [tool.poetry.dependencies]
 # this will install virtual environment into /.venv because of POETRY_VIRTUALENVS_IN_PROJECT=true
@@ -63,5 +59,23 @@ COPY --from=base-image $VIRTUAL_ENVIRONMENT_PATH $VIRTUAL_ENVIRONMENT_PATH
 # Will also check if I can fix that annoying issue with some tweaks to docker build args
 # see: https://gist.github.com/UrsaDK/f90c9632997a70cfe2a6df2797731ac8
 RUN true
+
+COPY /app /application_root/app/
+
+FROM base-image as production-image-json-logging
+ENV LOG_CONFIG_FILE=/application_server/logging_configuration_file.yaml \
+    LOG_LEVEL="trace"
+COPY --from=base-image $VIRTUAL_ENVIRONMENT_PATH $VIRTUAL_ENVIRONMENT_PATH
+
+# This RUN statement fixes an issue while running the tests with GitHub Actions.
+# Tests work reliable locally on my machine or running GitHub Actions using act.
+# There is a bug with multistage builds in GitHub Actions which I can also reliable reproduce
+# see: https://github.com/moby/moby/issues/37965
+# Will also check if I can fix that annoying issue with some tweaks to docker build args
+# see: https://gist.github.com/UrsaDK/f90c9632997a70cfe2a6df2797731ac8
+RUN true
+
+# Adding log configuration for Uvicorn
+COPY ./application_server/logging_configuration_file.yaml /application_server/
 
 COPY /app /application_root/app/

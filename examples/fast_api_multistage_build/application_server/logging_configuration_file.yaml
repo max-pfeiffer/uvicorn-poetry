@@ -1,20 +1,15 @@
 version: 1
 disable_existing_loggers: False
 formatters:
-  default:
-    (): "uvicorn.logging.DefaultFormatter"
-    fmt: "%(levelprefix)s %(message)s"
-    use_colors: None
-  access:
-    (): "uvicorn.logging.AccessFormatter"
-    fmt: '%(levelprefix)s %(client_addr)s - "%(request_line)s" %(status_code)s'
+  json:
+    (): "json_log_formatter.VerboseJSONFormatter"
 handlers:
   default:
-    formatter: "default"
+    formatter: "json"
     class: "logging.StreamHandler"
     stream: "ext://sys.stderr"
   access:
-    formatter: "access"
+    formatter: "json"
     class: "logging.StreamHandler"
     stream: "ext://sys.stdout"
 loggers:
