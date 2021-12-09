@@ -76,6 +76,12 @@ if you would like to do a deep dive. Following environment variables are support
 
 **default:** `info`
 
+`LOG_CONFIG_FILE` : Logging configuration file. Options: dictConfig() formats: .json, .yaml. Any other format will be processed
+with fileConfig(). Set the formatters.default.use_colors and formatters.access.use_colors values to override the auto-detected behavior.
+Please be aware that by specifying a log config file any other log setting is overrriden.
+
+**default:** not specified, see [Uvicorn's default logging config](https://github.com/encode/uvicorn/blob/master/uvicorn/config.py)
+
 ### [Development](https://www.uvicorn.org/settings/#development)
 `RELOAD` : Enable auto-reload.
 * true
