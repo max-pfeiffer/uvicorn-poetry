@@ -39,7 +39,7 @@ def test_worker_reload(docker_client, target_architecture) -> None:
                 line
                 for line in logs_list
                 if line
-                == "WARNING:  StatReload detected file change in 'app/main.py'. Reloading..."
+                == "WARNING:  WatchGodReload detected file change in '['/application_root/app/main.py']'. Reloading..."
             ]
         )
         assert log_statement_count == number
