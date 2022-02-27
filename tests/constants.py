@@ -1,5 +1,5 @@
 TEST_CONTAINER_NAME: str = "uvicorn-poetry-test"
-SLEEP_TIME: float = 2.0
+SLEEP_TIME: float = 3.0
 HELLO_WORLD: str = "Hello World!"
 DEFAULT_UVICORN_CONFIG: dict[str, str] = {
     "workers": "1",
