@@ -11,7 +11,8 @@ from build.images import UvicornGunicornPoetryImage, FastApiMultistageImage
 from tests.constants import (
     TEST_CONTAINER_NAME,
     SLEEP_TIME,
-    HELLO_WORLD, JSON_LOGGING_CONFIG,
+    HELLO_WORLD,
+    JSON_LOGGING_CONFIG,
 )
 from tests.utils import UvicornGunicornPoetryContainerConfig
 

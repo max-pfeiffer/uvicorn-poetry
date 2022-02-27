@@ -7,15 +7,15 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-uvicorn = {version = "0.15.0", extras = ["standard"]}
-fastapi = "0.70.0"
+uvicorn = {version = "0.17.5", extras = ["standard"]}
+fastapi = "0.74.1"
 json-log-formatter = "0.4.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "6.2.5"
 pytest-cov = "3.0.0"
 coverage = "6.1.1"
-black = "21.10b0"
+black = "22.1.0"
 requests = "2.25.1"
 
 # https://docs.pytest.org/en/latest/reference/customize.html

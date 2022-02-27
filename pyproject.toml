@@ -1,13 +1,13 @@
 [tool.poetry]
 name = "uvicorn-poetry"
-version = "1.0.0"
-description = "Uvicorn ASGI server with Poetry as dependency manager for running web applications."
+version = "1.1.0"
+description = "Docker image with Uvicorn ASGI server for running Python web applications on Kubernetes. Uses Poetry for managing dependencies and setting up a virtual environment."
 authors = ["Max Pfeiffer <max@maxpfeiffer.ch>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
 python = "3.9.*"
-python-dotenv = "0.19.1"
+python-dotenv = "0.19.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "6.2.5"
@@ -15,7 +15,7 @@ pytest-cov = "3.0.0"
 coverage = "6.1.2"
 docker = "5.0.3"
 requests = "2.25.1"
-black = "21.10b0"
+black = "22.1.0"
 
 # https://docs.pytest.org/en/latest/reference/customize.html
 [tool.pytest.ini_options]
