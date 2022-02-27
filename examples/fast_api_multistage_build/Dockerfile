@@ -10,7 +10,7 @@ COPY ./poetry.lock ./pyproject.toml /application_root/
 RUN poetry install --no-interaction --no-root --no-dev
 
 FROM base-image as test-base-image
-ENV LOG_LEVEL="debug"
+ENV UVICORN_LOG_LEVEL="debug"
 
 COPY --from=base-image $VIRTUAL_ENVIRONMENT_PATH $VIRTUAL_ENVIRONMENT_PATH
 
@@ -38,8 +38,8 @@ ENTRYPOINT /entrypoints/pytest_entrypoint.sh $0 $@
 CMD ["--cov=app", "--cov-report=xml:/test_coverage_reports/unit_tests_coverage.xml"]
 
 FROM base-image as development-image
-ENV RELOAD="true" \
-    LOG_LEVEL="debug"
+ENV UVICORN_RELOAD=1 \
+    UVICORN_LOG_LEVEL="debug"
 
 COPY --from=base-image $VIRTUAL_ENVIRONMENT_PATH $VIRTUAL_ENVIRONMENT_PATH
 
@@ -63,8 +63,8 @@ RUN true
 COPY /app /application_root/app/
 
 FROM base-image as production-image-json-logging
-ENV LOG_CONFIG_FILE=/application_server/logging_configuration_file.yaml \
-    LOG_LEVEL="trace"
+ENV UVICORN_LOG_CONFIG=/application_server/logging_configuration_file.yaml \
+    UVICORN_LOG_LEVEL="trace"
 COPY --from=base-image $VIRTUAL_ENVIRONMENT_PATH $VIRTUAL_ENVIRONMENT_PATH
 
 # This RUN statement fixes an issue while running the tests with GitHub Actions.
