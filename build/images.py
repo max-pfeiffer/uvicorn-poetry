@@ -1,6 +1,5 @@
 import os
 from datetime import datetime
-from typing import Dict
 
 import docker
 from docker.models.images import Image
@@ -39,7 +38,7 @@ class UvicornGunicornPoetryImage(DockerImage):
         if version is not None:
             self.version_tag = version
 
-        buildargs: Dict[str, str] = {
+        buildargs: dict[str, str] = {
             "OFFICIAL_PYTHON_IMAGE": BASE_IMAGES[target_architecture]
         }
         tag: str = f"{self.image_name}:{self.version_tag}-{target_architecture}"
@@ -76,8 +75,9 @@ class FastApiMultistageImage(DockerImage):
 
         self.image_tag = f"{self.version_tag}-{target_architecture}"
 
-        buildargs: Dict[str, str] = {
+        buildargs: dict[str, str] = {
             "BASE_IMAGE_NAME_AND_TAG": f"{UVICORN_POETRY_IMAGE_NAME}:{self.image_tag}",
+            "OFFICIAL_PYTHON_IMAGE": BASE_IMAGES[target_architecture],
         }
         image: Image = self.docker_client.images.build(
             path=self.absolute_docker_image_directory_path,
