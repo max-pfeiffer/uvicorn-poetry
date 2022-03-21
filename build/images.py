@@ -7,7 +7,8 @@ from docker.models.images import Image
 from build.constants import (
     UVICORN_POETRY_IMAGE_NAME,
     BASE_IMAGES,
-    FAST_API_MULTISTAGE_IMAGE_NAME, )
+    FAST_API_MULTISTAGE_IMAGE_NAME,
+)
 
 
 class DockerImage:

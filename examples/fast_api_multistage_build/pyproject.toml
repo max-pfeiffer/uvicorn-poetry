@@ -7,8 +7,8 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-uvicorn = {version = "0.17.5", extras = ["standard"]}
-fastapi = "0.74.1"
+uvicorn = {version = "0.17.6", extras = ["standard"]}
+fastapi = "0.75.0"
 json-log-formatter = "0.4.0"
 
 [tool.poetry.dev-dependencies]

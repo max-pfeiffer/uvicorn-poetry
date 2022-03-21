@@ -71,6 +71,17 @@ USER python_application
 
 CMD ["/application_server/start_uvicorn.sh"]
 
+FROM base-image as development-image
+ENV UVICORN_RELOAD=1 \
+    UVICORN_LOG_LEVEL="debug"
+
+COPY --from=base-image $VIRTUAL_ENVIRONMENT_PATH $VIRTUAL_ENVIRONMENT_PATH
+
+# install [tool.poetry.dev-dependencies]
+RUN poetry install --no-interaction --no-root
+
+COPY . /application_root/
+
 FROM base-image as test-base-image
 ENV UVICORN_LOG_LEVEL="debug"
 
@@ -98,15 +109,3 @@ ENTRYPOINT /entrypoints/pytest_entrypoint.sh $0 $@
 # tests directory is configured in pyproject.toml
 # https://github.com/pytest-dev/pytest-cov
 CMD ["--cov=app", "--cov-report=xml:/test_coverage_reports/unit_tests_coverage.xml"]
-
-FROM base-image as development-image
-ENV UVICORN_RELOAD=1 \
-    UVICORN_LOG_LEVEL="debug"
-
-COPY --from=base-image $VIRTUAL_ENVIRONMENT_PATH $VIRTUAL_ENVIRONMENT_PATH
-
-# install [tool.poetry.dev-dependencies]
-RUN poetry install --no-interaction --no-root
-
-COPY . /application_root/
-
