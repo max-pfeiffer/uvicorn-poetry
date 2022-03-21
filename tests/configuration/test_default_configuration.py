@@ -26,9 +26,6 @@ def verify_container(container: UvicornGunicornPoetryContainerConfig) -> None:
     assert config_data["workers"] == DEFAULT_UVICORN_CONFIG["workers"]
     assert config_data["host"] == DEFAULT_UVICORN_CONFIG["host"]
     assert config_data["port"] == DEFAULT_UVICORN_CONFIG["port"]
-    assert config_data["log-level"] == DEFAULT_UVICORN_CONFIG["log-level"]
-    with pytest.raises(KeyError):
-        assert config_data["reload"] == DEFAULT_UVICORN_CONFIG["reload"]
 
 
 @pytest.mark.parametrize("target_architecture", TARGET_ARCHITECTURES)

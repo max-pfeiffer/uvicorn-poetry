@@ -14,6 +14,17 @@ Docker Hub: [pfeiffermax/uvicorn-poetry](https://hub.docker.com/r/pfeiffermax/uv
 
 GitHub Repository: [https://github.com/max-pfeiffer/uvicorn-poetry](https://github.com/max-pfeiffer/uvicorn-poetry)
 
+## Docker Image Features
+1. Supported architectures:
+   1. Python v3.9.11, Debian or Debian-slim
+   2. Python v3.10.3, Debian or Debian-slim
+2. Poetry is available as Python package dependency management tool
+3. A virtual environment for the application and application server
+4. An entrypoint for running the Python application with Uvicorn
+5. Additional entrypoints for [pytest](https://github.com/max-pfeiffer/uvicorn-poetry/blob/main/build/scripts/pytest_entrypoint.sh)
+   and [black](https://github.com/max-pfeiffer/uvicorn-poetry/blob/main/build/scripts/black_entrypoint.sh) which can be used in
+   multi stage builds for building docker executables
+
 ## Usage
 The image just provides a platform that you can use to build upon your own multistage builds. So it consequently does not contain an
 application itself. Please check out the [example application](https://github.com/max-pfeiffer/uvicorn-poetry/tree/main/examples/fast_api_multistage_build)
@@ -39,52 +50,26 @@ The application and test structure needs to be like that:
 ```
 Please be aware that you need to provide a pyproject.toml file to specify your Python package dependencies for Poetry and configure
 dependencies like Pytest. Poetry dependencies must at least contain the following to work:
-* python = "3.9.8"
-* uvicorn = "0.15.0"
+* python = "3.9.11"
+* uvicorn = "0.17.6"
 
 If your application uses FastAPI framework this needs to be added as well:
-* fastapi = "0.70.0"
+* fastapi = "0.75.0"
 
 **IMPORTANT:** make sure you have a [.dockerignore file](https://github.com/max-pfeiffer/uvicorn-poetry/blob/main/examples/fast_api_multistage_build/.dockerignore)
 in your application root which excludes your local virtual environment in .venv! Otherwise you will have an issue activating that virtual
 environment when running the container.
 
-## Image Features
-1. Supported architectures: currently only Python v3.9.8, Debian or Debian-slim
-2. Poetry is available as Python package dependency management tool
-3. A virtual environment for the application and application server
-4. Configuration of Uvicorn through environment variables
-5. Additional entrypoints for [pytest](https://github.com/max-pfeiffer/uvicorn-poetry/blob/main/build/scripts/pytest_entrypoint.sh)
-   and [black](https://github.com/max-pfeiffer/uvicorn-poetry/blob/main/build/scripts/black_entrypoint.sh) which can be used in
-   multi stage builds for building docker executables
-
 ## Configuration
-Configuration is done trough the following environment variables during docker build. For everything else Uvicorn uses it's defaults.
-I will add more environment variables in the future. If you would like to have something specific send me a pull request or drop me a line.
+Configuration is done through command line arguments in the entrypoint for running the Python application.
+For everything else Uvicorn uses it's defaults.
+Since [Uvicorn v0.16.0](https://github.com/encode/uvicorn/releases/tag/0.16.0) you can configure everything else via
+[environment variables](https://www.uvicorn.org/settings/) with the prefix `UVICORN_`. 
 For all the following configuration options please see always the
-[official Uvicorn documentation](https://www.uvicorn.org/settings/)
-if you would like to do a deep dive. Following environment variables are supported:
+[official Uvicorn documentation](https://www.uvicorn.org/settings/) if you would like to do a deep dive.
 
-### [Logging](https://www.uvicorn.org/settings/#logging)
-`LOG_LEVEL` : The granularity of Error log outputs. Valid level names are:
-* debug
-* trace
-* info
-* warning
-* error
-* critical
-
-**default:** `info`
-
-`LOG_CONFIG_FILE` : Logging configuration file. Options: dictConfig() formats: .json, .yaml. Any other format will be processed
-with fileConfig(). Set the formatters.default.use_colors and formatters.access.use_colors values to override the auto-detected behavior.
-Please be aware that by specifying a log config file any other log setting is overrriden.
-
-**default:** not specified, see [Uvicorn's default logging config](https://github.com/encode/uvicorn/blob/master/uvicorn/config.py)
-
-### [Development](https://www.uvicorn.org/settings/#development)
-`RELOAD` : Enable auto-reload.
-* true
-* false
-
-**default:** `false`
+### Important change since V2.0.0
+The custom environment variables are not supported any more: 
+1. `LOG_LEVEL` : The granularity of Error log outputs.
+2. `LOG_CONFIG_FILE` : Logging configuration file.
+3. `RELOAD` : Enable auto-reload.

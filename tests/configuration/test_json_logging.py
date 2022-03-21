@@ -11,7 +11,8 @@ from build.images import UvicornGunicornPoetryImage, FastApiMultistageImage
 from tests.constants import (
     TEST_CONTAINER_NAME,
     SLEEP_TIME,
-    HELLO_WORLD, JSON_LOGGING_CONFIG,
+    HELLO_WORLD,
+    JSON_LOGGING_CONFIG,
 )
 from tests.utils import UvicornGunicornPoetryContainerConfig
 
@@ -24,10 +25,6 @@ def verify_container(container: UvicornGunicornPoetryContainerConfig) -> None:
     assert config_data["workers"] == JSON_LOGGING_CONFIG["workers"]
     assert config_data["host"] == JSON_LOGGING_CONFIG["host"]
     assert config_data["port"] == JSON_LOGGING_CONFIG["port"]
-    assert config_data["log-level"] == JSON_LOGGING_CONFIG["log-level"]
-    with pytest.raises(KeyError):
-        assert config_data["reload"] == JSON_LOGGING_CONFIG["reload"]
-    assert config_data["log-config"] == JSON_LOGGING_CONFIG["log-config"]
 
 
 @pytest.mark.parametrize("target_architecture", TARGET_ARCHITECTURES)

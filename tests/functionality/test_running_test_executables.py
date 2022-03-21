@@ -1,5 +1,3 @@
-from typing import Dict
-
 import pytest
 from docker.models.images import Image
 
@@ -15,7 +13,7 @@ def test_running_pep8_test_image(docker_client, target_architecture) -> None:
         target_architecture, "black-test-image"
     )
 
-    api_response: Dict = docker_client.containers.run(
+    api_response: dict = docker_client.containers.run(
         test_image.tags[0],
         name=TEST_CONTAINER_NAME,
         ports={"80": "8000"},
@@ -31,7 +29,7 @@ def test_running_unit_test_image(docker_client, target_architecture) -> None:
         target_architecture, "unit-test-image"
     )
 
-    api_response: Dict = docker_client.containers.run(
+    api_response: dict = docker_client.containers.run(
         test_image.tags[0],
         name=TEST_CONTAINER_NAME,
         ports={"80": "8000"},
