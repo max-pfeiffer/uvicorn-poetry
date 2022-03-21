@@ -10,9 +10,9 @@ of this image can follow up on that.
 
 Any feedback is highly appreciated and will be considered.
 
-Docker Hub: [pfeiffermax/uvicorn-poetry](https://hub.docker.com/r/pfeiffermax/uvicorn-poetry)
+**Docker Hub:** [pfeiffermax/uvicorn-poetry](https://hub.docker.com/r/pfeiffermax/uvicorn-poetry)
 
-GitHub Repository: [https://github.com/max-pfeiffer/uvicorn-poetry](https://github.com/max-pfeiffer/uvicorn-poetry)
+**GitHub Repository:** [https://github.com/max-pfeiffer/uvicorn-poetry](https://github.com/max-pfeiffer/uvicorn-poetry)
 
 ## Docker Image Features
 1. Supported architectures:
@@ -20,7 +20,7 @@ GitHub Repository: [https://github.com/max-pfeiffer/uvicorn-poetry](https://gith
    2. Python v3.10.3, Debian or Debian-slim
 2. Poetry is available as Python package dependency management tool
 3. A virtual environment for the application and application server
-4. An entrypoint for running the Python application with Uvicorn
+4. An [entrypoint for running the Python application with Uvicorn](https://github.com/max-pfeiffer/uvicorn-poetry/blob/main/build/scripts/start_uvicorn.sh)
 5. Additional entrypoints for [pytest](https://github.com/max-pfeiffer/uvicorn-poetry/blob/main/build/scripts/pytest_entrypoint.sh)
    and [black](https://github.com/max-pfeiffer/uvicorn-poetry/blob/main/build/scripts/black_entrypoint.sh) which can be used in
    multi stage builds for building docker executables
@@ -34,6 +34,7 @@ Please be aware that your application needs an application layout without src fo
 [fastapi-realworld-example-app](https://github.com/nsidnev/fastapi-realworld-example-app).
 The application and test structure needs to be like that:
 ```bash
+├── .dockerignore
 ├── Dockerfile
 ├── app
 │    ├── __init__.py
@@ -50,7 +51,7 @@ The application and test structure needs to be like that:
 ```
 Please be aware that you need to provide a pyproject.toml file to specify your Python package dependencies for Poetry and configure
 dependencies like Pytest. Poetry dependencies must at least contain the following to work:
-* python = "3.9.11"
+* python = "^3.9"
 * uvicorn = "0.17.6"
 
 If your application uses FastAPI framework this needs to be added as well:
@@ -61,7 +62,8 @@ in your application root which excludes your local virtual environment in .venv!
 environment when running the container.
 
 ## Configuration
-Configuration is done through command line arguments in the entrypoint for running the Python application.
+Configuration is done through command line arguments in the
+[entrypoint for running the Python application](https://github.com/max-pfeiffer/uvicorn-poetry/blob/main/build/scripts/start_uvicorn.sh).
 For everything else Uvicorn uses it's defaults.
 Since [Uvicorn v0.16.0](https://github.com/encode/uvicorn/releases/tag/0.16.0) you can configure everything else via
 [environment variables](https://www.uvicorn.org/settings/) with the prefix `UVICORN_`. 
@@ -69,7 +71,7 @@ For all the following configuration options please see always the
 [official Uvicorn documentation](https://www.uvicorn.org/settings/) if you would like to do a deep dive.
 
 ### Important change since V2.0.0
-The custom environment variables are not supported any more: 
+These custom environment variables are not supported any more: 
 1. `LOG_LEVEL` : The granularity of Error log outputs.
 2. `LOG_CONFIG_FILE` : Logging configuration file.
 3. `RELOAD` : Enable auto-reload.

@@ -1,6 +1,6 @@
 # Be aware that you need to specify these arguments before the first FROM
 # see: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
-ARG BASE_IMAGE_NAME_AND_TAG=pfeiffermax/uvicorn-poetry:1.0.1-python3.9.8-slim-bullseye
+ARG BASE_IMAGE_NAME_AND_TAG=pfeiffermax/uvicorn-poetry:2.0.0-python3.9.11-slim-bullseye
 ARG OFFICIAL_PYTHON_IMAGE
 FROM ${BASE_IMAGE_NAME_AND_TAG} as base-image
 
