@@ -19,8 +19,8 @@ Any feedback is highly appreciated and will be considered.
 
 ## Docker Image Features
 1. Supported architectures:
-   1. Python v3.9.11, Debian or Debian-slim
-   2. Python v3.10.3, Debian or Debian-slim
+   1. Python v3.9, Debian or Debian-slim
+   2. Python v3.10, Debian or Debian-slim
 2. Poetry is available as Python package dependency management tool
 3. A virtual environment for the application and application server
 4. An [entrypoint for running the Python application with Uvicorn](https://github.com/max-pfeiffer/uvicorn-poetry/blob/main/build/scripts/start_uvicorn.sh)
@@ -68,10 +68,10 @@ environment when running the container.
 Configuration is done through command line arguments in the
 [entrypoint for running the Python application](https://github.com/max-pfeiffer/uvicorn-poetry/blob/main/build/scripts/start_uvicorn.sh).
 For everything else Uvicorn uses it's defaults.
-Since [Uvicorn v0.16.0](https://github.com/encode/uvicorn/releases/tag/0.16.0) you can configure everything else via
-[environment variables](https://www.uvicorn.org/settings/) with the prefix `UVICORN_`. 
-For all the following configuration options please see always the
-[official Uvicorn documentation](https://www.uvicorn.org/settings/) if you would like to do a deep dive.
+Since [Uvicorn v0.16.0](https://github.com/encode/uvicorn/releases/tag/0.16.0) you can configure Uvicorn via
+[environment variables](https://www.uvicorn.org/settings/) with the prefix `UVICORN_`.
+If you would like to do a deep dive on all the configuration options please see the
+[official Uvicorn documentation](https://www.uvicorn.org/settings/).
 
 ### Important change since V2.0.0
 These custom environment variables are not supported any more: 
