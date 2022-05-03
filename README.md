@@ -29,6 +29,9 @@ Any feedback is highly appreciated and will be considered.
    multi stage builds for building docker executables
 
 ## Usage
+You can use the [uvicorn-poetry-project-template](https://github.com/max-pfeiffer/uvicorn-poetry-project-template) for your convenience.
+It requires [Cookiecutter](https://github.com/cookiecutter/cookiecutter).
+
 The image just provides a platform that you can use to build upon your own multistage builds. So it consequently does not contain an
 application itself. Please check out the [example application](https://github.com/max-pfeiffer/uvicorn-poetry/tree/main/examples/fast_api_multistage_build)
 on how to use that image and build containers efficiently.
