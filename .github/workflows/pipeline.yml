@@ -24,7 +24,7 @@ jobs:
         run: |
           source .venv/bin/activate
           export DOCKER_BUILDKIT=1
-          pytest tests/configuration/test_default_configuration.py
+          pytest
           pytest --cov=./ --cov-report=xml
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
