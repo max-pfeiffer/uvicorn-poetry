@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "uvicorn-poetry"
-version = "1.1.0"
+version = "2.0.0"
 description = "Docker image with Uvicorn ASGI server for running Python web applications on Kubernetes. Uses Poetry for managing dependencies and setting up a virtual environment."
 authors = ["Max Pfeiffer <max@maxpfeiffer.ch>"]
 license = "MIT"
@@ -15,7 +15,8 @@ pytest-cov = "3.0.0"
 coverage = "6.1.2"
 docker = "5.0.3"
 requests = "2.25.1"
-black = "22.1.0"
+black = "22.6.0"
+pre-commit = "2.19.0"
 
 # https://docs.pytest.org/en/latest/reference/customize.html
 [tool.pytest.ini_options]
