@@ -29,10 +29,10 @@ COPY --from=production-dependencies-build-stage /application_server/start_uvicor
 
 # Use a non-root user to run the application
 # see: https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#user
-RUN adduser --system --no-create-home python_application
 
 COPY /app /application_root/app/
 
+RUN adduser --system --no-create-home python_application
 USER python_application
 
 CMD ["/application_server/start_uvicorn.sh"]
@@ -59,12 +59,12 @@ COPY --from=production-dependencies-build-stage /application_server/start_uvicor
 
 # Use a non-root user to run the application
 # see: https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#user
-RUN adduser --system --no-create-home python_application
 
 # Adding log configuration for Uvicorn
 COPY /application_server/logging_configuration_file.yaml /application_server/logging_configuration_file.yaml
 COPY /app /application_root/app/
 
+RUN adduser --system --no-create-home python_application
 USER python_application
 CMD ["/application_server/start_uvicorn.sh"]
 # Document the exposed port which was configured in start_uvicorn.sh
