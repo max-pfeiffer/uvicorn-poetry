@@ -2,7 +2,7 @@
 # see: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
 ARG BASE_IMAGE_NAME_AND_TAG=pfeiffermax/uvicorn-poetry:2.0.0-python3.9.11-slim-bullseye
 ARG OFFICIAL_PYTHON_IMAGE
-FROM ${BASE_IMAGE_NAME_AND_TAG} as base-image
+FROM ${BASE_IMAGE_NAME_AND_TAG} as production-dependencies-build-stage
 
 WORKDIR /application_root
 
@@ -17,8 +17,8 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/application_root
 
-COPY --from=base-image /application_root/.venv /application_root/.venv
-COPY --from=base-image /application_server/start_uvicorn.sh /application_server/start_uvicorn.sh
+COPY --from=production-dependencies-build-stage /application_root/.venv /application_root/.venv
+COPY --from=production-dependencies-build-stage /application_server/start_uvicorn.sh /application_server/start_uvicorn.sh
 
 # This RUN statement at this place fixes an issue while running the tests with GitHub Actions.
 # Tests work reliable locally on my machine or running GitHub Actions using act.
@@ -47,8 +47,8 @@ ENV PYTHONUNBUFFERED=1 \
     UVICORN_LOG_CONFIG=/application_server/logging_configuration_file.yaml \
     UVICORN_LOG_LEVEL="trace"
 
-COPY --from=base-image /application_root/.venv /application_root/.venv
-COPY --from=base-image /application_server/start_uvicorn.sh /application_server/
+COPY --from=production-dependencies-build-stage /application_root/.venv /application_root/.venv
+COPY --from=production-dependencies-build-stage /application_server/start_uvicorn.sh /application_server/
 
 # This RUN statement at this place fixes an issue while running the tests with GitHub Actions.
 # Tests work reliable locally on my machine or running GitHub Actions using act.
@@ -71,19 +71,15 @@ CMD ["/application_server/start_uvicorn.sh"]
 # https://docs.docker.com/engine/reference/builder/#expose
 EXPOSE 80
 
-FROM base-image as dev-base-image
-
-COPY --from=base-image $VIRTUAL_ENVIRONMENT_PATH $VIRTUAL_ENVIRONMENT_PATH
+FROM production-dependencies-build-stage as dev-dependencies-build-stage
 
 # install [tool.poetry.dev-dependencies]
 RUN poetry install --no-interaction --no-root
 
 
-FROM dev-base-image as development-image
+FROM dev-dependencies-build-stage as development-image
 ENV UVICORN_RELOAD=1 \
     UVICORN_LOG_LEVEL="debug"
-
-COPY --from=dev-base-image $VIRTUAL_ENVIRONMENT_PATH $VIRTUAL_ENVIRONMENT_PATH
 
 # This RUN statement at this place fixes an issue while running the tests with GitHub Actions.
 # Tests work reliable locally on my machine or running GitHub Actions using act.
@@ -104,7 +100,7 @@ CMD ["/application_server/start_uvicorn.sh"]
 # https://docs.docker.com/engine/reference/builder/#expose
 EXPOSE 80
 
-FROM dev-base-image as test-base-image
+FROM dev-dependencies-build-stage as test-base-image
 
 COPY /app /application_root/app/
 COPY /tests /application_root/tests/
