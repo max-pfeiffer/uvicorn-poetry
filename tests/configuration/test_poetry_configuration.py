@@ -26,7 +26,7 @@ def test_worker_reload(docker_client, target_architecture) -> None:
 
     (exit_code, output) = test_container.exec_run(["poetry", "--version"])
     assert exit_code == 0
-    assert f"Poetry version {POETRY_VERSION}" in output.decode("utf-8")
+    assert f"Poetry (version {POETRY_VERSION})" in output.decode("utf-8")
 
     (exit_code_config, output_config) = test_container.exec_run(
         ["poetry", "config", "--list"]

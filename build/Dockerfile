@@ -34,7 +34,7 @@ RUN apt-get update \
     && apt-get install --no-install-recommends -y \
         build-essential \
         curl \
-    && curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python - \
+    && curl -sSL https://install.python-poetry.org | python - \
     && apt-get purge --auto-remove -y \
       build-essential \
       curl
@@ -46,6 +46,12 @@ COPY ./scripts/pytest_entrypoint.sh ./scripts/black_entrypoint.sh /entrypoints/
 RUN chmod +x /entrypoints/pytest_entrypoint.sh
 RUN chmod +x /entrypoints/black_entrypoint.sh
 
+# Use a non-root user to run the application
+# see: https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#user
+
+
 EXPOSE 80
 
 CMD ["/application_server/start_uvicorn.sh"]
+# Document the exposed port which was configured in start_uvicorn.sh
+# https://docs.docker.com/engine/reference/builder/#expose
