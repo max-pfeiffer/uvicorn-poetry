@@ -4,7 +4,7 @@ import pytest
 from docker.models.containers import Container
 from docker.models.images import Image
 
-from build.constants import TARGET_ARCHITECTURES
+from build.constants import TARGET_ARCHITECTURES, APPLICATION_SERVER_PORT
 from build.images import UvicornGunicornPoetryImage, FastApiMultistageImage
 from tests.constants import TEST_CONTAINER_NAME, SLEEP_TIME
 
@@ -19,7 +19,7 @@ def test_worker_reload(docker_client, target_architecture) -> None:
     test_container: Container = docker_client.containers.run(
         test_image.tags[0],
         name=TEST_CONTAINER_NAME,
-        ports={"80": "8000"},
+        ports={APPLICATION_SERVER_PORT: "80"},
         detach=True,
     )
     time.sleep(SLEEP_TIME)

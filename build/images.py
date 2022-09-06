@@ -7,7 +7,7 @@ from docker.models.images import Image
 from build.constants import (
     UVICORN_POETRY_IMAGE_NAME,
     BASE_IMAGES,
-    FAST_API_MULTISTAGE_IMAGE_NAME, POETRY_VERSION,
+    FAST_API_MULTISTAGE_IMAGE_NAME, POETRY_VERSION, APPLICATION_SERVER_PORT,
 )
 
 
@@ -42,6 +42,7 @@ class UvicornGunicornPoetryImage(DockerImage):
         buildargs: dict[str, str] = {
             "OFFICIAL_PYTHON_IMAGE": BASE_IMAGES[target_architecture],
             "IMAGE_POETRY_VERSION": POETRY_VERSION,
+            "APPLICATION_SERVER_PORT": APPLICATION_SERVER_PORT,
         }
         tag: str = f"{self.image_name}:{self.version_tag}-{target_architecture}"
 

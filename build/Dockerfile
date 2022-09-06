@@ -2,6 +2,7 @@
 # https://hub.docker.com/_/python
 ARG OFFICIAL_PYTHON_IMAGE
 ARG IMAGE_POETRY_VERSION
+ARG APPLICATION_SERVER_PORT
 FROM ${OFFICIAL_PYTHON_IMAGE}
 
 LABEL maintainer="Max Pfeiffer <max@maxpfeiffer.ch>"
@@ -48,4 +49,4 @@ RUN chmod +x /entrypoints/black_entrypoint.sh
 
 # Document the exposed port which was configured in start_uvicorn.sh
 # https://docs.docker.com/engine/reference/builder/#expose
-EXPOSE 80
+EXPOSE ${APPLICATION_SERVER_PORT}

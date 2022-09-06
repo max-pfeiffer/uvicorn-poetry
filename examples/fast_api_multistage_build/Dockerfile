@@ -32,7 +32,7 @@ CMD ["/application_server/start_uvicorn.sh"]
 
 # Document the exposed port which was configured in start_uvicorn.sh
 # https://docs.docker.com/engine/reference/builder/#expose
-EXPOSE 80
+EXPOSE 8080
 
 FROM ${OFFICIAL_PYTHON_IMAGE} as production-image-json-logging
 ENV PYTHONUNBUFFERED=1 \
@@ -58,7 +58,7 @@ CMD ["/application_server/start_uvicorn.sh"]
 
 # Document the exposed port which was configured in start_uvicorn.sh
 # https://docs.docker.com/engine/reference/builder/#expose
-EXPOSE 80
+EXPOSE 8080
 
 FROM production-dependencies-build-stage as dev-dependencies-build-stage
 
@@ -81,7 +81,7 @@ CMD ["/application_server/start_uvicorn.sh"]
 
 # Document the exposed port which was configured in start_uvicorn.sh
 # https://docs.docker.com/engine/reference/builder/#expose
-EXPOSE 80
+EXPOSE 8080
 
 FROM dev-dependencies-build-stage as test-base-image
 

@@ -6,7 +6,7 @@ import requests
 from docker.models.containers import Container
 from docker.models.images import Image
 
-from build.constants import TARGET_ARCHITECTURES
+from build.constants import TARGET_ARCHITECTURES, APPLICATION_SERVER_PORT
 
 from build.images import UvicornGunicornPoetryImage, FastApiMultistageImage
 from tests.constants import (
@@ -19,7 +19,7 @@ from tests.utils import UvicornGunicornPoetryContainerConfig
 
 
 def verify_container(container: UvicornGunicornPoetryContainerConfig) -> None:
-    response = requests.get("http://127.0.0.1:8000")
+    response = requests.get("http://127.0.0.1")
     assert json.loads(response.text) == HELLO_WORLD
 
     config_data: dict[str, str] = container.get_uvicorn_conf()
@@ -38,7 +38,7 @@ def test_default_configuration(docker_client, target_architecture) -> None:
     test_container: Container = docker_client.containers.run(
         test_image.tags[0],
         name=TEST_CONTAINER_NAME,
-        ports={"80": "8000"},
+        ports={APPLICATION_SERVER_PORT: "80"},
         detach=True,
     )
     uvicorn_gunicorn_container: UvicornGunicornPoetryContainerConfig = (

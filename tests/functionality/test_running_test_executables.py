@@ -1,7 +1,7 @@
 import pytest
 from docker.models.images import Image
 
-from build.constants import TARGET_ARCHITECTURES
+from build.constants import TARGET_ARCHITECTURES, APPLICATION_SERVER_PORT
 from build.images import UvicornGunicornPoetryImage, FastApiMultistageImage
 from tests.constants import TEST_CONTAINER_NAME
 
@@ -16,7 +16,7 @@ def test_running_pep8_test_image(docker_client, target_architecture) -> None:
     api_response: dict = docker_client.containers.run(
         test_image.tags[0],
         name=TEST_CONTAINER_NAME,
-        ports={"80": "8000"},
+        ports={APPLICATION_SERVER_PORT: "80"},
         detach=True,
     ).wait()
     assert api_response["StatusCode"] == 0
@@ -32,7 +32,7 @@ def test_running_unit_test_image(docker_client, target_architecture) -> None:
     api_response: dict = docker_client.containers.run(
         test_image.tags[0],
         name=TEST_CONTAINER_NAME,
-        ports={"80": "8000"},
+        ports={APPLICATION_SERVER_PORT: "80"},
         detach=True,
     ).wait()
     assert api_response["StatusCode"] == 0
