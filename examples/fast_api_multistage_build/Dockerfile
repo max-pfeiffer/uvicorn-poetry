@@ -10,7 +10,7 @@ WORKDIR /application_root
 # this will install virtual environment into /.venv because of POETRY_VIRTUALENVS_IN_PROJECT=true
 # see: https://python-poetry.org/docs/configuration/#virtualenvsin-project
 COPY ./poetry.lock ./pyproject.toml /application_root/
-RUN poetry install --no-interaction --no-root --no-dev
+RUN poetry install --no-interaction --no-root --without dev
 
 FROM ${OFFICIAL_PYTHON_IMAGE} as production-image
 ENV PYTHONUNBUFFERED=1 \
@@ -33,11 +33,12 @@ RUN adduser --system --no-create-home python_application
 
 COPY /app /application_root/app/
 
-EXPOSE 80
-
 USER python_application
 
 CMD ["/application_server/start_uvicorn.sh"]
+# Document the exposed port which was configured in start_uvicorn.sh
+# https://docs.docker.com/engine/reference/builder/#expose
+EXPOSE 80
 
 FROM ${OFFICIAL_PYTHON_IMAGE} as production-image-json-logging
 ENV PYTHONUNBUFFERED=1 \
@@ -62,33 +63,48 @@ RUN adduser --system --no-create-home python_application
 
 # Adding log configuration for Uvicorn
 COPY /application_server/logging_configuration_file.yaml /application_server/logging_configuration_file.yaml
-
 COPY /app /application_root/app/
 
+USER python_application
+CMD ["/application_server/start_uvicorn.sh"]
+# Document the exposed port which was configured in start_uvicorn.sh
+# https://docs.docker.com/engine/reference/builder/#expose
 EXPOSE 80
 
-USER python_application
+FROM base-image as dev-base-image
 
-CMD ["/application_server/start_uvicorn.sh"]
+COPY --from=base-image $VIRTUAL_ENVIRONMENT_PATH $VIRTUAL_ENVIRONMENT_PATH
 
-FROM base-image as development-image
+# install [tool.poetry.dev-dependencies]
+RUN poetry install --no-interaction --no-root
+
+
+FROM dev-base-image as development-image
 ENV UVICORN_RELOAD=1 \
     UVICORN_LOG_LEVEL="debug"
 
-COPY --from=base-image $VIRTUAL_ENVIRONMENT_PATH $VIRTUAL_ENVIRONMENT_PATH
+COPY --from=dev-base-image $VIRTUAL_ENVIRONMENT_PATH $VIRTUAL_ENVIRONMENT_PATH
 
-# install [tool.poetry.dev-dependencies]
-RUN poetry install --no-interaction --no-root
+# This RUN statement at this place fixes an issue while running the tests with GitHub Actions.
+# Tests work reliable locally on my machine or running GitHub Actions using act.
+# There is a bug with multistage builds in GitHub Actions which I can also reliable reproduce
+# see: https://github.com/moby/moby/issues/37965
+# Will also check if I can fix that annoying issue with some tweaks to docker build args
+# see: https://gist.github.com/UrsaDK/f90c9632997a70cfe2a6df2797731ac8
+
+# Use a non-root user to run the application
+# see: https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#user
+RUN adduser --system --no-create-home python_application
 
 COPY . /application_root/
 
-FROM base-image as test-base-image
-ENV UVICORN_LOG_LEVEL="debug"
+USER python_application
+CMD ["/application_server/start_uvicorn.sh"]
+# Document the exposed port which was configured in start_uvicorn.sh
+# https://docs.docker.com/engine/reference/builder/#expose
+EXPOSE 80
 
-COPY --from=base-image $VIRTUAL_ENVIRONMENT_PATH $VIRTUAL_ENVIRONMENT_PATH
-
-# install [tool.poetry.dev-dependencies]
-RUN poetry install --no-interaction --no-root
+FROM dev-base-image as test-base-image
 
 COPY /app /application_root/app/
 COPY /tests /application_root/tests/

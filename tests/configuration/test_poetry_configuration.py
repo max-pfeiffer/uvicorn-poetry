@@ -24,12 +24,12 @@ def test_worker_reload(docker_client, target_architecture) -> None:
     )
     time.sleep(SLEEP_TIME)
 
-    (exit_code, output) = test_container.exec_run(["poetry", "--version"])
+    (exit_code, output) = test_container.exec_run(["poetry", "--version"], user="root")
     assert exit_code == 0
     assert f"Poetry (version {POETRY_VERSION})" in output.decode("utf-8")
 
     (exit_code_config, output_config) = test_container.exec_run(
-        ["poetry", "config", "--list"]
+        ["poetry", "config", "--list"], user="root"
     )
     assert exit_code_config == 0
     assert "virtualenvs.in-project = true" in output_config.decode("utf-8")

@@ -26,7 +26,7 @@ def test_worker_reload(docker_client, target_architecture) -> None:
 
     for number in range(1, 4):
         (exit_code, output) = test_container.exec_run(
-            ["touch", "/application_root/app/main.py"]
+            ["touch", "/application_root/app/main.py"], user="root"
         )
         assert exit_code == 0
         assert output.decode("utf-8") == ""
