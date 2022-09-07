@@ -2,6 +2,7 @@
 # see: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
 ARG BASE_IMAGE_NAME_AND_TAG=pfeiffermax/uvicorn-poetry:2.0.0-python3.9.11-slim-bullseye
 ARG OFFICIAL_PYTHON_IMAGE
+ARG APPLICATION_SERVER_PORT=80
 FROM ${BASE_IMAGE_NAME_AND_TAG} as production-dependencies-build-stage
 
 WORKDIR /application_root
@@ -22,17 +23,12 @@ COPY --from=production-dependencies-build-stage /application_server/start_uvicor
 
 COPY /app /application_root/app/
 
-# Use a non-root user to run the application
-# see: https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#user
-RUN adduser --system --no-create-home python_application
-USER python_application
-
 # Activate entrypoint for running the uvicorn application server
 CMD ["/application_server/start_uvicorn.sh"]
 
 # Document the exposed port which was configured in start_uvicorn.sh
 # https://docs.docker.com/engine/reference/builder/#expose
-EXPOSE 8080
+EXPOSE ${APPLICATION_SERVER_PORT}
 
 FROM ${OFFICIAL_PYTHON_IMAGE} as production-image-json-logging
 ENV PYTHONUNBUFFERED=1 \
@@ -48,17 +44,12 @@ COPY --from=production-dependencies-build-stage /application_server/start_uvicor
 COPY /application_server/logging_configuration_file.yaml /application_server/logging_configuration_file.yaml
 COPY /app /application_root/app/
 
-# Use a non-root user to run the application
-# see: https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#user
-RUN adduser --system --no-create-home python_application
-USER python_application
-
 # Activate entrypoint for running the uvicorn application server
 CMD ["/application_server/start_uvicorn.sh"]
 
 # Document the exposed port which was configured in start_uvicorn.sh
 # https://docs.docker.com/engine/reference/builder/#expose
-EXPOSE 8080
+EXPOSE ${APPLICATION_SERVER_PORT}
 
 FROM production-dependencies-build-stage as dev-dependencies-build-stage
 
@@ -71,17 +62,12 @@ ENV UVICORN_RELOAD=1 \
 
 COPY . /application_root/
 
-# Use a non-root user to run the application
-# see: https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#user
-RUN adduser --system --no-create-home python_application
-USER python_application
-
 # Activate entrypoint for running the uvicorn application server
 CMD ["/application_server/start_uvicorn.sh"]
 
 # Document the exposed port which was configured in start_uvicorn.sh
 # https://docs.docker.com/engine/reference/builder/#expose
-EXPOSE 8080
+EXPOSE ${APPLICATION_SERVER_PORT}
 
 FROM dev-dependencies-build-stage as test-base-image
 

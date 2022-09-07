@@ -4,8 +4,11 @@ import pytest
 from docker.models.containers import Container
 from docker.models.images import Image
 
-from build.constants import TARGET_ARCHITECTURES, POETRY_VERSION, \
-    APPLICATION_SERVER_PORT
+from build.constants import (
+    TARGET_ARCHITECTURES,
+    POETRY_VERSION,
+    APPLICATION_SERVER_PORT,
+)
 from build.images import UvicornGunicornPoetryImage, FastApiMultistageImage
 from tests.constants import TEST_CONTAINER_NAME, SLEEP_TIME
 
@@ -25,7 +28,9 @@ def test_worker_reload(docker_client, target_architecture) -> None:
     )
     time.sleep(SLEEP_TIME)
 
-    (exit_code, output) = test_container.exec_run(["poetry", "--version"], user="root")
+    (exit_code, output) = test_container.exec_run(
+        ["poetry", "--version"], user="root"
+    )
     assert exit_code == 0
     assert f"Poetry (version {POETRY_VERSION})" in output.decode("utf-8")
 

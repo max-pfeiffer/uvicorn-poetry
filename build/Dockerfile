@@ -47,6 +47,9 @@ COPY ./scripts/pytest_entrypoint.sh ./scripts/black_entrypoint.sh /entrypoints/
 RUN chmod +x /entrypoints/pytest_entrypoint.sh
 RUN chmod +x /entrypoints/black_entrypoint.sh
 
+# Activate entrypoint for running the uvicorn application server
+CMD ["/application_server/start_uvicorn.sh"]
+
 # Document the exposed port which was configured in start_uvicorn.sh
 # https://docs.docker.com/engine/reference/builder/#expose
 EXPOSE ${APPLICATION_SERVER_PORT}

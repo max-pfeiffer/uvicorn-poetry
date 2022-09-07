@@ -4,8 +4,11 @@ import pytest
 from docker.models.containers import Container
 from docker.models.images import Image
 
-from build.constants import TARGET_ARCHITECTURES, PYTHON_VERSIONS, \
-    APPLICATION_SERVER_PORT
+from build.constants import (
+    TARGET_ARCHITECTURES,
+    PYTHON_VERSIONS,
+    APPLICATION_SERVER_PORT,
+)
 from build.images import UvicornGunicornPoetryImage, FastApiMultistageImage
 from tests.constants import TEST_CONTAINER_NAME, SLEEP_TIME
 
