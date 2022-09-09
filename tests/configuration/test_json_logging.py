@@ -28,10 +28,14 @@ def verify_container(container: UvicornGunicornPoetryContainerConfig) -> None:
 
 
 @pytest.mark.parametrize("target_architecture", TARGET_ARCHITECTURES)
-def test_default_configuration(docker_client, target_architecture) -> None:
-    UvicornGunicornPoetryImage(docker_client).build(target_architecture)
+def test_default_configuration(
+    docker_client, target_architecture, version
+) -> None:
+    UvicornGunicornPoetryImage(docker_client).build(
+        target_architecture, version=version
+    )
     test_image: Image = FastApiMultistageImage(docker_client).build(
-        target_architecture, "production-image-json-logging"
+        target_architecture, "production-image-json-logging", version=version
     )
 
     test_container: Container = docker_client.containers.run(

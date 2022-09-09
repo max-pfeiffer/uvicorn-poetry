@@ -2,4 +2,4 @@
 .pytest_cache
 __pycache__
 .idea
-test_coverage_reports/
+test_coverage_reports/*

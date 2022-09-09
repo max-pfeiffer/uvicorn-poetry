@@ -10,10 +10,12 @@ from tests.constants import TEST_CONTAINER_NAME, SLEEP_TIME
 
 
 @pytest.mark.parametrize("target_architecture", TARGET_ARCHITECTURES)
-def test_worker_reload(docker_client, target_architecture) -> None:
-    UvicornGunicornPoetryImage(docker_client).build(target_architecture)
+def test_worker_reload(docker_client, target_architecture, version) -> None:
+    UvicornGunicornPoetryImage(docker_client).build(
+        target_architecture, version=version
+    )
     test_image: Image = FastApiMultistageImage(docker_client).build(
-        target_architecture, "development-image"
+        target_architecture, "development-image", version=version
     )
 
     test_container: Container = docker_client.containers.run(
@@ -26,7 +28,7 @@ def test_worker_reload(docker_client, target_architecture) -> None:
 
     for number in range(1, 4):
         (exit_code, output) = test_container.exec_run(
-            ["touch", "/application_root/app/main.py"], user="root"
+            ["touch", "/application_root/app/main.py"]
         )
         assert exit_code == 0
         assert output.decode("utf-8") == ""
@@ -39,7 +41,7 @@ def test_worker_reload(docker_client, target_architecture) -> None:
                 line
                 for line in logs_list
                 if line
-                == "WARNING:  WatchGodReload detected file change in '['/application_root/app/main.py']'. Reloading..."
+                == "WARNING:  WatchFiles detected changes in 'app/main.py'. Reloading..."
             ]
         )
         assert log_statement_count == number

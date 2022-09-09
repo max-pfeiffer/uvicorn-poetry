@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 import docker
 import pytest
 from docker.errors import NotFound
@@ -9,12 +11,17 @@ from build.constants import (
 from tests.constants import TEST_CONTAINER_NAME
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def docker_client() -> docker.client:
     return docker.client.from_env()
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(scope="function")
+def version() -> str:
+    return str(uuid4())
+
+
+@pytest.fixture(scope="function", autouse=True)
 def prepare_docker_env(docker_client) -> None:
     # Remove old container
     try:

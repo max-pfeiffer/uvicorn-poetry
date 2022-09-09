@@ -14,10 +14,12 @@ from tests.constants import TEST_CONTAINER_NAME, SLEEP_TIME
 
 
 @pytest.mark.parametrize("target_architecture", TARGET_ARCHITECTURES)
-def test_python_version(docker_client, target_architecture) -> None:
-    UvicornGunicornPoetryImage(docker_client).build(target_architecture)
+def test_python_version(docker_client, target_architecture, version) -> None:
+    UvicornGunicornPoetryImage(docker_client).build(
+        target_architecture, version=version
+    )
     test_image: Image = FastApiMultistageImage(docker_client).build(
-        target_architecture, "production-image"
+        target_architecture, "production-image", version=version
     )
 
     test_container: Container = docker_client.containers.run(

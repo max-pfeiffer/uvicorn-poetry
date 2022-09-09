@@ -7,10 +7,14 @@ from tests.constants import TEST_CONTAINER_NAME
 
 
 @pytest.mark.parametrize("target_architecture", TARGET_ARCHITECTURES)
-def test_running_pep8_test_image(docker_client, target_architecture) -> None:
-    UvicornGunicornPoetryImage(docker_client).build(target_architecture)
+def test_running_pep8_test_image(
+    docker_client, target_architecture, version
+) -> None:
+    UvicornGunicornPoetryImage(docker_client).build(
+        target_architecture, version=version
+    )
     test_image: Image = FastApiMultistageImage(docker_client).build(
-        target_architecture, "black-test-image"
+        target_architecture, "black-test-image", version=version
     )
 
     api_response: dict = docker_client.containers.run(
@@ -23,10 +27,14 @@ def test_running_pep8_test_image(docker_client, target_architecture) -> None:
 
 
 @pytest.mark.parametrize("target_architecture", TARGET_ARCHITECTURES)
-def test_running_unit_test_image(docker_client, target_architecture) -> None:
-    UvicornGunicornPoetryImage(docker_client).build(target_architecture)
+def test_running_unit_test_image(
+    docker_client, target_architecture, version
+) -> None:
+    UvicornGunicornPoetryImage(docker_client).build(
+        target_architecture, version=version
+    )
     test_image: Image = FastApiMultistageImage(docker_client).build(
-        target_architecture, "unit-test-image"
+        target_architecture, "unit-test-image", version=version
     )
 
     api_response: dict = docker_client.containers.run(

@@ -14,10 +14,16 @@ from tests.constants import TEST_CONTAINER_NAME, SLEEP_TIME
 
 
 @pytest.mark.parametrize("target_architecture", TARGET_ARCHITECTURES)
-def test_worker_reload(docker_client, target_architecture) -> None:
-    UvicornGunicornPoetryImage(docker_client).build(target_architecture)
+def test_poetry_configuration(
+    docker_client, target_architecture, version
+) -> None:
+    UvicornGunicornPoetryImage(docker_client).build(
+        target_architecture, version=version
+    )
     test_image: Image = FastApiMultistageImage(docker_client).build(
-        target_architecture, "development-image"
+        target_architecture,
+        "production-dependencies-build-stage",
+        version=version,
     )
 
     test_container: Container = docker_client.containers.run(
@@ -28,14 +34,12 @@ def test_worker_reload(docker_client, target_architecture) -> None:
     )
     time.sleep(SLEEP_TIME)
 
-    (exit_code, output) = test_container.exec_run(
-        ["poetry", "--version"], user="root"
-    )
+    (exit_code, output) = test_container.exec_run(["poetry", "--version"])
     assert exit_code == 0
     assert f"Poetry (version {POETRY_VERSION})" in output.decode("utf-8")
 
     (exit_code_config, output_config) = test_container.exec_run(
-        ["poetry", "config", "--list"], user="root"
+        ["poetry", "config", "--list"]
     )
     assert exit_code_config == 0
     assert "virtualenvs.in-project = true" in output_config.decode("utf-8")
