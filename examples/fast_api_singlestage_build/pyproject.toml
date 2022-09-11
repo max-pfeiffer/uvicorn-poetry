@@ -1,22 +1,22 @@
 [tool.poetry]
-name = "uvicorn-poetry"
-version = "2.0.0"
-description = "Docker image with Uvicorn ASGI server for running Python web applications on Kubernetes. Uses Poetry for managing dependencies and setting up a virtual environment."
+name = "fast_api_multistage_build"
+version = "1.0.0"
+description = "Example app for testing and demonstrating uvicorn-poetry docker image."
 authors = ["Max Pfeiffer <max@maxpfeiffer.ch>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "3.9.*"
-python-dotenv = "0.21.0"
+python = "^3.9"
+uvicorn = {version = "0.18.3", extras = ["standard"]}
+fastapi = "0.82.0"
+json-log-formatter = "0.5.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "7.1.3"
 pytest-cov = "3.0.0"
 coverage = "6.4.4"
-docker = "6.0.0"
-requests = "2.28.1"
 black = "22.8.0"
-pre-commit = "2.20.0"
+requests = "2.28.1"
 
 # https://docs.pytest.org/en/latest/reference/customize.html
 [tool.pytest.ini_options]
@@ -27,7 +27,7 @@ testpaths = [
 # https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html#configuration-via-a-file
 [tool.black]
 line-length = 80
-target-version = ["py39"]
+target-version = ['py39']
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

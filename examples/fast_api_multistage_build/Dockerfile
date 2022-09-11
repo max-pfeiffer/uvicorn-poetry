@@ -18,6 +18,8 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/application_root
 
+WORKDIR /application_root
+
 COPY --from=production-dependencies-build-stage /application_root/.venv /application_root/.venv
 COPY --from=production-dependencies-build-stage /application_server/start_uvicorn.sh /application_server/start_uvicorn.sh
 
@@ -36,6 +38,8 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONPATH=/application_root \
     UVICORN_LOG_CONFIG=/application_server/logging_configuration_file.yaml \
     UVICORN_LOG_LEVEL=trace
+
+WORKDIR /application_root
 
 COPY --from=production-dependencies-build-stage /application_root/.venv /application_root/.venv
 COPY --from=production-dependencies-build-stage /application_server/start_uvicorn.sh /application_server/
@@ -61,15 +65,14 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/application_root \
     UVICORN_RELOAD=1 \
-#    UVICORN_RELOAD_DIRS=/application_root \
     UVICORN_LOG_LEVEL=debug
+
+WORKDIR /application_root
 
 COPY --from=dev-dependencies-build-stage /application_root/.venv /application_root/.venv
 COPY --from=dev-dependencies-build-stage /application_server/start_uvicorn.sh /application_server/
 
 COPY . /application_root/
-# UVICORN_RELOAD_DIR is not working
-WORKDIR /application_root
 
 # Activate entrypoint for running the uvicorn application server
 CMD ["/application_server/start_uvicorn.sh"]
@@ -78,20 +81,31 @@ CMD ["/application_server/start_uvicorn.sh"]
 # https://docs.docker.com/engine/reference/builder/#expose
 EXPOSE ${APPLICATION_SERVER_PORT}
 
-FROM dev-dependencies-build-stage as test-base-image
+FROM ${OFFICIAL_PYTHON_IMAGE} as test-base-image
+
+COPY --from=dev-dependencies-build-stage /application_root/.venv /application_root/.venv
 
 COPY /app /application_root/app/
 COPY /tests /application_root/tests/
 
+
 # image for running pep8 checks
 FROM test-base-image as black-test-image
 
+WORKDIR /application_root
+
+COPY --from=dev-dependencies-build-stage /entrypoints/black_entrypoint.sh /entrypoints/
+
 ENTRYPOINT /entrypoints/black_entrypoint.sh $0 $@
 
-CMD ["--target-version py39", "--check", " --line-length 80", "app"]
+CMD ["--target-version py39", "--check", " --line-length 80", "."]
 
 # image for running unit tests
 FROM test-base-image as unit-test-image
+
+WORKDIR /application_root
+
+COPY --from=dev-dependencies-build-stage /entrypoints/pytest_entrypoint.sh /entrypoints/
 
 ENTRYPOINT /entrypoints/pytest_entrypoint.sh $0 $@
 

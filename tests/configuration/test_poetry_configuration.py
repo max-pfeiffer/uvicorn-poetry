@@ -9,7 +9,7 @@ from build.constants import (
     POETRY_VERSION,
     APPLICATION_SERVER_PORT,
 )
-from build.images import UvicornGunicornPoetryImage, FastApiMultistageImage
+from build.images import UvicornGunicornPoetryImage, FastApiSinglestageImage
 from tests.constants import TEST_CONTAINER_NAME, SLEEP_TIME
 
 
@@ -20,9 +20,8 @@ def test_poetry_configuration(
     UvicornGunicornPoetryImage(docker_client).build(
         target_architecture, version=version
     )
-    test_image: Image = FastApiMultistageImage(docker_client).build(
+    test_image: Image = FastApiSinglestageImage(docker_client).build(
         target_architecture,
-        "production-dependencies-build-stage",
         version=version,
     )
 

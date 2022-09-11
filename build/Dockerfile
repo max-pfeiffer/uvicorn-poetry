@@ -30,6 +30,12 @@ ENV PYTHONUNBUFFERED=1 \
 
 ENV PATH="$POETRY_HOME/bin:$VIRTUAL_ENVIRONMENT_PATH/bin:$PATH"
 
+# Set the WORKDIR to the application root. This needed for the entrypoints to
+# work. Also Uvicorn --reload feature relies by default on the current work dir.
+# https://www.uvicorn.org/settings/#development
+# https://docs.docker.com/engine/reference/builder/#workdir
+WORKDIR ${PYTHONPATH}
+
 # https://python-poetry.org/docs/#osx--linux--bashonwindows-install-instructions
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
