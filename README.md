@@ -58,10 +58,10 @@ The application and test structure needs to be like that:
 Please be aware that you need to provide a pyproject.toml file to specify your Python package dependencies for Poetry and configure
 dependencies like Pytest. Poetry dependencies must at least contain the following to work:
 * python = "^3.9"
-* uvicorn = "0.17.6"
+* uvicorn = "0.18.3"
 
 If your application uses FastAPI framework this needs to be added as well:
-* fastapi = "0.75.0"
+* fastapi = "0.82.0"
 
 **IMPORTANT:** make sure you have a [.dockerignore file](https://github.com/max-pfeiffer/uvicorn-poetry/blob/main/examples/fast_api_multistage_build/.dockerignore)
 in your application root which excludes your local virtual environment in .venv! Otherwise you will have an issue activating that virtual
