@@ -1,4 +1,4 @@
-import time
+from time import sleep
 
 from docker.models.containers import Container
 
@@ -14,7 +14,7 @@ def test_poetry_configuration(docker_client, images) -> None:
         name=TEST_CONTAINER_NAME,
         detach=True,
     )
-    time.sleep(SLEEP_TIME)
+    sleep(SLEEP_TIME)
 
     (exit_code, output) = test_container.exec_run(["poetry", "--version"])
     assert exit_code == 0

@@ -1,13 +1,10 @@
 import json
-import time
+from time import sleep
 
-import pytest
 import requests
 from docker.models.containers import Container
-from docker.models.images import Image
 
-from build.constants import TARGET_ARCHITECTURES, APPLICATION_SERVER_PORT
-from build.images import UvicornGunicornPoetryImage, FastApiMultistageImage
+from build.constants import APPLICATION_SERVER_PORT
 from tests.constants import (
     TEST_CONTAINER_NAME,
     SLEEP_TIME,
@@ -27,19 +24,9 @@ def verify_container(container: UvicornGunicornPoetryContainerConfig) -> None:
     assert config_data["port"] == DEVELOPMENT_UVICORN_CONFIG["port"]
 
 
-@pytest.mark.parametrize("target_architecture", TARGET_ARCHITECTURES)
-def test_default_configuration(
-    docker_client, target_architecture, version
-) -> None:
-    UvicornGunicornPoetryImage(docker_client).build(
-        target_architecture, version=version
-    )
-    test_image: Image = FastApiMultistageImage(docker_client).build(
-        target_architecture, "development-image", version=version
-    )
-
+def test_development_configuration(docker_client, images) -> None:
     test_container: Container = docker_client.containers.run(
-        test_image.tags[0],
+        images.fast_api_multistage_development_image,
         name=TEST_CONTAINER_NAME,
         ports={APPLICATION_SERVER_PORT: "80"},
         detach=True,
@@ -47,11 +34,11 @@ def test_default_configuration(
     uvicorn_gunicorn_container: UvicornGunicornPoetryContainerConfig = (
         UvicornGunicornPoetryContainerConfig(test_container)
     )
-    time.sleep(SLEEP_TIME)
+    sleep(SLEEP_TIME)
     verify_container(uvicorn_gunicorn_container)
     test_container.stop()
 
     # Test restarting the container
     test_container.start()
-    time.sleep(SLEEP_TIME)
+    sleep(SLEEP_TIME)
     verify_container(uvicorn_gunicorn_container)

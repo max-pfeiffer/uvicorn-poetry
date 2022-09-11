@@ -1,35 +1,26 @@
-import time
+from time import sleep
 
-import pytest
 from docker.models.containers import Container
-from docker.models.images import Image
 
 from build.constants import (
-    TARGET_ARCHITECTURES,
     PYTHON_VERSIONS,
 )
-from build.images import UvicornGunicornPoetryImage, FastApiMultistageImage
 from tests.constants import TEST_CONTAINER_NAME, SLEEP_TIME
 
 
-@pytest.mark.parametrize("target_architecture", TARGET_ARCHITECTURES)
-def test_python_version(docker_client, target_architecture, version) -> None:
-    UvicornGunicornPoetryImage(docker_client).build(
-        target_architecture, version=version
-    )
-    test_image: Image = FastApiMultistageImage(docker_client).build(
-        target_architecture, "production-image", version=version
-    )
-
+def test_python_version(docker_client, images) -> None:
+    image_tag: str = images.fast_api_multistage_production_image
     test_container: Container = docker_client.containers.run(
-        test_image.tags[0],
+        image_tag,
         name=TEST_CONTAINER_NAME,
         detach=True,
     )
-    time.sleep(SLEEP_TIME)
+    sleep(SLEEP_TIME)
 
     (exit_code, output) = test_container.exec_run(["python", "--version"])
     assert exit_code == 0
 
+    image_tag_parts: list[str] = image_tag.split(":")[-1].split("-", maxsplit=1)
+    target_architecture: str = image_tag_parts[-1]
     version_string: str = f"Python {PYTHON_VERSIONS[target_architecture]}"
     assert version_string in output.decode("utf-8")

@@ -42,7 +42,7 @@ ENV PYTHONUNBUFFERED=1 \
 WORKDIR /application_root
 
 COPY --from=production-dependencies-build-stage /application_root/.venv /application_root/.venv
-COPY --from=production-dependencies-build-stage /application_server/start_uvicorn.sh /application_server/
+COPY --from=production-dependencies-build-stage /application_server/start_uvicorn.sh /application_server/start_uvicorn.sh
 
 # Adding log configuration for Uvicorn
 COPY /application_server/logging_configuration_file.yaml /application_server/logging_configuration_file.yaml

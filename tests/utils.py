@@ -58,4 +58,6 @@ class UvicornGunicornPoetryContainerConfig:
 class ImageTags:
     uvicorn_gunicorn_poetry_image: str
     fast_api_multistage_production_image: str
+    fast_api_multistage_production_image_json_logging: str
+    fast_api_multistage_development_image: str
     fast_api_singlestage_image: str

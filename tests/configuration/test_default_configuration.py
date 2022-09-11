@@ -1,5 +1,5 @@
 import json
-import time
+from time import sleep
 
 import requests
 from docker.models.containers import Container
@@ -37,11 +37,11 @@ def test_default_configuration(docker_client, images) -> None:
     uvicorn_gunicorn_container_config: UvicornGunicornPoetryContainerConfig = (
         UvicornGunicornPoetryContainerConfig(test_container)
     )
-    time.sleep(SLEEP_TIME)
+    sleep(SLEEP_TIME)
     verify_container_config(uvicorn_gunicorn_container_config)
     test_container.stop()
 
     # Test restarting the container
     test_container.start()
-    time.sleep(SLEEP_TIME)
+    sleep(SLEEP_TIME)
     verify_container_config(uvicorn_gunicorn_container_config)
