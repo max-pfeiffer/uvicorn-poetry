@@ -24,9 +24,9 @@ def verify_container(container: UvicornGunicornPoetryContainerConfig) -> None:
     assert config_data["port"] == JSON_LOGGING_CONFIG["port"]
 
 
-def test_json_logging(docker_client, images) -> None:
+def test_json_logging(docker_client, fast_api_multistage_production_image_json_logging) -> None:
     test_container: Container = docker_client.containers.run(
-        images.fast_api_multistage_production_image_json_logging,
+        fast_api_multistage_production_image_json_logging,
         name=TEST_CONTAINER_NAME,
         ports={APPLICATION_SERVER_PORT: "80"},
         detach=True,

@@ -55,9 +55,16 @@ class UvicornGunicornPoetryContainerConfig:
 
 
 @dataclass
-class ImageTags:
-    uvicorn_gunicorn_poetry_image: str
-    fast_api_multistage_production_image: str
-    fast_api_multistage_production_image_json_logging: str
-    fast_api_multistage_development_image: str
-    fast_api_singlestage_image: str
+class ImageTagComponents:
+    image_name: str
+    version: str
+    target_architecture: str
+
+
+def strip_docker_tag(docker_tag: str):
+    image_name: str = docker_tag.split(":")[0]
+    image_tag: str = docker_tag.split(":")[1]
+    image_tag_parts: list[str] = image_tag.split("-", maxsplit=1)
+    version: str = image_tag_parts[0]
+    target_architecture: str = image_tag_parts[1]
+    return ImageTagComponents(image_name=image_name, version=version, target_architecture=target_architecture)
