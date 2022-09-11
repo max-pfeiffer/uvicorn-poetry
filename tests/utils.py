@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from docker.models.containers import Container
 
 
@@ -50,3 +52,10 @@ class UvicornGunicornPoetryContainerConfig:
 
             uvicorn_config[option] = value
         return uvicorn_config
+
+
+@dataclass
+class ImageTags:
+    uvicorn_gunicorn_poetry_image: str
+    fast_api_multistage_production_image: str
+    fast_api_singlestage_image: str

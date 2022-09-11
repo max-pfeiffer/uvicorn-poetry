@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Union
 
 import docker
 from docker.models.images import Image
@@ -19,9 +20,9 @@ class DockerImage:
         self.absolute_module_directory_path: Path = Path(
             __file__
         ).parent.resolve()
-        self.image_name: str = None
-        self.image_tag: str = None
-        self.version_tag: str = None
+        self.image_name: Union[str, None] = None
+        self.image_tag: Union[str, None] = None
+        self.version_tag: Union[str, None] = None
         self.dockerfile_name: str = "Dockerfile"
 
 
