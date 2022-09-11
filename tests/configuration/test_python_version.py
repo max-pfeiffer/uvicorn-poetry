@@ -6,12 +6,14 @@ from build.constants import (
     PYTHON_VERSIONS,
 )
 from tests.constants import TEST_CONTAINER_NAME, SLEEP_TIME
+from tests.utils import ImageTagComponents
 
 
-def test_python_version(docker_client, images) -> None:
-    image_tag: str = images.fast_api_multistage_production_image
+def test_python_version(
+    docker_client, fast_api_multistage_production_image
+) -> None:
     test_container: Container = docker_client.containers.run(
-        image_tag,
+        fast_api_multistage_production_image,
         name=TEST_CONTAINER_NAME,
         detach=True,
     )
@@ -20,7 +22,11 @@ def test_python_version(docker_client, images) -> None:
     (exit_code, output) = test_container.exec_run(["python", "--version"])
     assert exit_code == 0
 
-    image_tag_parts: list[str] = image_tag.split(":")[-1].split("-", maxsplit=1)
-    target_architecture: str = image_tag_parts[-1]
-    version_string: str = f"Python {PYTHON_VERSIONS[target_architecture]}"
+    components: ImageTagComponents = ImageTagComponents.create_from_tag(
+        fast_api_multistage_production_image
+    )
+
+    version_string: str = (
+        f"Python {PYTHON_VERSIONS[components.target_architecture]}"
+    )
     assert version_string in output.decode("utf-8")

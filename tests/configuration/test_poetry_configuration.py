@@ -8,9 +8,11 @@ from build.constants import (
 from tests.constants import TEST_CONTAINER_NAME, SLEEP_TIME
 
 
-def test_poetry_configuration(docker_client, images) -> None:
+def test_poetry_configuration(
+    docker_client, fast_api_singlestage_image
+) -> None:
     test_container: Container = docker_client.containers.run(
-        images.fast_api_singlestage_image,
+        fast_api_singlestage_image,
         name=TEST_CONTAINER_NAME,
         detach=True,
     )

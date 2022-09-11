@@ -73,13 +73,13 @@ class FastApiSinglestageImage(DockerImage):
         # see: https://docs.docker.com/engine/reference/commandline/tag/
         self.image_name: str = FAST_API_SINGLESTAGE_IMAGE_NAME
 
-    def build(self, target_architecture: str, version: str = None) -> Image:
+    def build(self, target_architecture: str, version: str, base_image_tag: str) -> Image:
         self.version_tag = version
 
         self.image_tag = f"{self.version_tag}-{target_architecture}"
 
         buildargs: dict[str, str] = {
-            "BASE_IMAGE_NAME_AND_TAG": f"{UVICORN_POETRY_IMAGE_NAME}:{self.image_tag}",
+            "BASE_IMAGE_NAME_AND_TAG": base_image_tag,
             "OFFICIAL_PYTHON_IMAGE": BASE_IMAGES[target_architecture],
             "APPLICATION_SERVER_PORT": APPLICATION_SERVER_PORT,
         }

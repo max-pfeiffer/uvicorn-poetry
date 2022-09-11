@@ -18,4 +18,3 @@ JSON_LOGGING_CONFIG: dict[str, str] = {
     "host": "0.0.0.0",
     "port": APPLICATION_SERVER_PORT,
 }
-VERSIONS: list[str] = ["1.0.0", "3.74.4", "21.4.10"]

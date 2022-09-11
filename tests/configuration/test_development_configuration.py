@@ -24,9 +24,11 @@ def verify_container(container: UvicornGunicornPoetryContainerConfig) -> None:
     assert config_data["port"] == DEVELOPMENT_UVICORN_CONFIG["port"]
 
 
-def test_development_configuration(docker_client, images) -> None:
+def test_development_configuration(
+    docker_client, fast_api_multistage_development_image
+) -> None:
     test_container: Container = docker_client.containers.run(
-        images.fast_api_multistage_development_image,
+        fast_api_multistage_development_image,
         name=TEST_CONTAINER_NAME,
         ports={APPLICATION_SERVER_PORT: "80"},
         detach=True,

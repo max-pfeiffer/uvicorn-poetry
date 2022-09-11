@@ -26,10 +26,12 @@ def verify_container_config(
     assert config_data["port"] == DEFAULT_UVICORN_CONFIG["port"]
 
 
-def test_default_configuration(docker_client, images) -> None:
+def test_default_configuration(
+    docker_client, fast_api_multistage_production_image
+) -> None:
 
     test_container: Container = docker_client.containers.run(
-        images.fast_api_multistage_production_image,
+        fast_api_multistage_production_image,
         name=TEST_CONTAINER_NAME,
         ports={APPLICATION_SERVER_PORT: "80"},
         detach=True,
