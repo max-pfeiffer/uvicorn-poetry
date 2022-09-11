@@ -5,8 +5,6 @@ ARG OFFICIAL_PYTHON_IMAGE
 ARG APPLICATION_SERVER_PORT=80
 FROM ${BASE_IMAGE_NAME_AND_TAG} as production-dependencies-build-stage
 
-WORKDIR /application_root
-
 # install [tool.poetry.dependencies]
 # this will install virtual environment into /.venv because of POETRY_VIRTUALENVS_IN_PROJECT=true
 # see: https://python-poetry.org/docs/configuration/#virtualenvsin-project
@@ -23,6 +21,7 @@ WORKDIR /application_root
 COPY --from=production-dependencies-build-stage /application_root/.venv /application_root/.venv
 COPY --from=production-dependencies-build-stage /application_server/start_uvicorn.sh /application_server/start_uvicorn.sh
 
+# Copy application files
 COPY /app /application_root/app/
 
 # Activate entrypoint for running the uvicorn application server
@@ -46,6 +45,7 @@ COPY --from=production-dependencies-build-stage /application_server/start_uvicor
 
 # Adding log configuration for Uvicorn
 COPY /application_server/logging_configuration_file.yaml /application_server/logging_configuration_file.yaml
+# Copy application files
 COPY /app /application_root/app/
 
 # Activate entrypoint for running the uvicorn application server

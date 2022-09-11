@@ -9,4 +9,5 @@ FROM ${BASE_IMAGE_NAME_AND_TAG} as production-dependencies-build-stage
 COPY ./poetry.lock ./pyproject.toml /application_root/
 RUN poetry install --no-interaction --no-root
 
+# Copy application files
 COPY . /application_root/

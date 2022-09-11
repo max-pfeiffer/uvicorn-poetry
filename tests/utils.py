@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from docker.models.containers import Container
 
 
-class UvicornGunicornPoetryContainerConfig:
+class UvicornPoetryContainerConfig:
     def __init__(self, container: Container):
         self.container: Container = container
 

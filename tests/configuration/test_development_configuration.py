@@ -11,10 +11,10 @@ from tests.constants import (
     HELLO_WORLD,
     DEVELOPMENT_UVICORN_CONFIG,
 )
-from tests.utils import UvicornGunicornPoetryContainerConfig
+from tests.utils import UvicornPoetryContainerConfig
 
 
-def verify_container(container: UvicornGunicornPoetryContainerConfig) -> None:
+def verify_container_config(container: UvicornPoetryContainerConfig) -> None:
     response = requests.get("http://127.0.0.1")
     assert json.loads(response.text) == HELLO_WORLD
 
@@ -33,14 +33,14 @@ def test_development_configuration(
         ports={APPLICATION_SERVER_PORT: "80"},
         detach=True,
     )
-    uvicorn_gunicorn_container: UvicornGunicornPoetryContainerConfig = (
-        UvicornGunicornPoetryContainerConfig(test_container)
+    uvicorn_gunicorn_container_config: UvicornPoetryContainerConfig = (
+        UvicornPoetryContainerConfig(test_container)
     )
     sleep(SLEEP_TIME)
-    verify_container(uvicorn_gunicorn_container)
+    verify_container_config(uvicorn_gunicorn_container_config)
     test_container.stop()
 
     # Test restarting the container
     test_container.start()
     sleep(SLEEP_TIME)
-    verify_container(uvicorn_gunicorn_container)
+    verify_container_config(uvicorn_gunicorn_container_config)
