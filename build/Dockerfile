@@ -2,6 +2,7 @@
 # https://hub.docker.com/_/python
 ARG OFFICIAL_PYTHON_IMAGE
 ARG IMAGE_POETRY_VERSION
+ARG APPLICATION_SERVER_PORT
 FROM ${OFFICIAL_PYTHON_IMAGE}
 
 LABEL maintainer="Max Pfeiffer <max@maxpfeiffer.ch>"
@@ -29,12 +30,18 @@ ENV PYTHONUNBUFFERED=1 \
 
 ENV PATH="$POETRY_HOME/bin:$VIRTUAL_ENVIRONMENT_PATH/bin:$PATH"
 
+# Set the WORKDIR to the application root. This needed for the entrypoints to
+# work. Also Uvicorn --reload feature relies by default on the current work dir.
+# https://www.uvicorn.org/settings/#development
+# https://docs.docker.com/engine/reference/builder/#workdir
+WORKDIR ${PYTHONPATH}
+
 # https://python-poetry.org/docs/#osx--linux--bashonwindows-install-instructions
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
         build-essential \
         curl \
-    && curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python - \
+    && curl -sSL https://install.python-poetry.org | python - \
     && apt-get purge --auto-remove -y \
       build-essential \
       curl
@@ -46,6 +53,9 @@ COPY ./scripts/pytest_entrypoint.sh ./scripts/black_entrypoint.sh /entrypoints/
 RUN chmod +x /entrypoints/pytest_entrypoint.sh
 RUN chmod +x /entrypoints/black_entrypoint.sh
 
-EXPOSE 80
-
+# Activate entrypoint for running the uvicorn application server
 CMD ["/application_server/start_uvicorn.sh"]
+
+# Document the exposed port which was configured in start_uvicorn.sh
+# https://docs.docker.com/engine/reference/builder/#expose
+EXPOSE ${APPLICATION_SERVER_PORT}

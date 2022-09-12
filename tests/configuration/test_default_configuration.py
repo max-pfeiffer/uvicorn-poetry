@@ -1,54 +1,81 @@
 import json
-import time
+from time import sleep
+from uuid import uuid4
 
 import pytest
 import requests
 from docker.models.containers import Container
-from docker.models.images import Image
 
-from build.constants import TARGET_ARCHITECTURES
-
-from build.images import UvicornGunicornPoetryImage, FastApiMultistageImage
+from build.constants import APPLICATION_SERVER_PORT
 from tests.constants import (
-    TEST_CONTAINER_NAME,
     SLEEP_TIME,
     HELLO_WORLD,
     DEFAULT_UVICORN_CONFIG,
 )
-from tests.utils import UvicornGunicornPoetryContainerConfig
+from tests.utils import UvicornPoetryContainerConfig
 
 
-def verify_container(container: UvicornGunicornPoetryContainerConfig) -> None:
-    response = requests.get("http://127.0.0.1:8000")
+def verify_container_config(
+    container_config: UvicornPoetryContainerConfig,
+) -> None:
+    response = requests.get("http://127.0.0.1")
     assert json.loads(response.text) == HELLO_WORLD
 
-    config_data: dict[str, str] = container.get_uvicorn_conf()
+    config_data: dict[str, str] = container_config.get_uvicorn_conf()
     assert config_data["workers"] == DEFAULT_UVICORN_CONFIG["workers"]
     assert config_data["host"] == DEFAULT_UVICORN_CONFIG["host"]
     assert config_data["port"] == DEFAULT_UVICORN_CONFIG["port"]
 
 
-@pytest.mark.parametrize("target_architecture", TARGET_ARCHITECTURES)
-def test_default_configuration(docker_client, target_architecture) -> None:
-    UvicornGunicornPoetryImage(docker_client).build(target_architecture)
-    test_image: Image = FastApiMultistageImage(docker_client).build(
-        target_architecture, "production-image"
-    )
-
+@pytest.mark.parametrize(
+    "cleaned_up_test_container", [str(uuid4())], indirect=True
+)
+def test_multistage_image(
+    docker_client,
+    fast_api_multistage_production_image,
+    cleaned_up_test_container,
+) -> None:
     test_container: Container = docker_client.containers.run(
-        test_image.tags[0],
-        name=TEST_CONTAINER_NAME,
-        ports={"80": "8000"},
+        fast_api_multistage_production_image,
+        name=cleaned_up_test_container,
+        ports={APPLICATION_SERVER_PORT: "80"},
         detach=True,
     )
-    uvicorn_gunicorn_container: UvicornGunicornPoetryContainerConfig = (
-        UvicornGunicornPoetryContainerConfig(test_container)
+    uvicorn_gunicorn_container_config: UvicornPoetryContainerConfig = (
+        UvicornPoetryContainerConfig(test_container)
     )
-    time.sleep(SLEEP_TIME)
-    verify_container(uvicorn_gunicorn_container)
+    sleep(SLEEP_TIME)
+    verify_container_config(uvicorn_gunicorn_container_config)
     test_container.stop()
 
     # Test restarting the container
     test_container.start()
-    time.sleep(SLEEP_TIME)
-    verify_container(uvicorn_gunicorn_container)
+    sleep(SLEEP_TIME)
+    verify_container_config(uvicorn_gunicorn_container_config)
+
+
+@pytest.mark.parametrize(
+    "cleaned_up_test_container", [str(uuid4())], indirect=True
+)
+def test_single_stage_image(
+        docker_client,
+        fast_api_singlestage_image,
+        cleaned_up_test_container,
+) -> None:
+    test_container: Container = docker_client.containers.run(
+        fast_api_singlestage_image,
+        name=cleaned_up_test_container,
+        ports={APPLICATION_SERVER_PORT: "80"},
+        detach=True,
+    )
+    uvicorn_gunicorn_container_config: UvicornPoetryContainerConfig = (
+        UvicornPoetryContainerConfig(test_container)
+    )
+    sleep(SLEEP_TIME)
+    verify_container_config(uvicorn_gunicorn_container_config)
+    test_container.stop()
+
+    # Test restarting the container
+    test_container.start()
+    sleep(SLEEP_TIME)
+    verify_container_config(uvicorn_gunicorn_container_config)

@@ -2,106 +2,110 @@
 # see: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
 ARG BASE_IMAGE_NAME_AND_TAG=pfeiffermax/uvicorn-poetry:2.0.0-python3.9.11-slim-bullseye
 ARG OFFICIAL_PYTHON_IMAGE
-FROM ${BASE_IMAGE_NAME_AND_TAG} as base-image
-
-WORKDIR /application_root
+ARG APPLICATION_SERVER_PORT=80
+FROM ${BASE_IMAGE_NAME_AND_TAG} as production-dependencies-build-stage
 
 # install [tool.poetry.dependencies]
 # this will install virtual environment into /.venv because of POETRY_VIRTUALENVS_IN_PROJECT=true
 # see: https://python-poetry.org/docs/configuration/#virtualenvsin-project
 COPY ./poetry.lock ./pyproject.toml /application_root/
-RUN poetry install --no-interaction --no-root --no-dev
+RUN poetry install --no-interaction --no-root --without dev
 
 FROM ${OFFICIAL_PYTHON_IMAGE} as production-image
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/application_root
 
-COPY --from=base-image /application_root/.venv /application_root/.venv
-COPY --from=base-image /application_server/start_uvicorn.sh /application_server/start_uvicorn.sh
+WORKDIR /application_root
 
-# This RUN statement at this place fixes an issue while running the tests with GitHub Actions.
-# Tests work reliable locally on my machine or running GitHub Actions using act.
-# There is a bug with multistage builds in GitHub Actions which I can also reliable reproduce
-# see: https://github.com/moby/moby/issues/37965
-# Will also check if I can fix that annoying issue with some tweaks to docker build args
-# see: https://gist.github.com/UrsaDK/f90c9632997a70cfe2a6df2797731ac8
+COPY --from=production-dependencies-build-stage /application_root/.venv /application_root/.venv
+COPY --from=production-dependencies-build-stage /application_server/start_uvicorn.sh /application_server/start_uvicorn.sh
 
-# Use a non-root user to run the application
-# see: https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#user
-RUN adduser --system --no-create-home python_application
-
+# Copy application files
 COPY /app /application_root/app/
 
-EXPOSE 80
-
-USER python_application
-
+# Activate entrypoint for running the uvicorn application server
 CMD ["/application_server/start_uvicorn.sh"]
+
+# Document the exposed port which was configured in start_uvicorn.sh
+# https://docs.docker.com/engine/reference/builder/#expose
+EXPOSE ${APPLICATION_SERVER_PORT}
 
 FROM ${OFFICIAL_PYTHON_IMAGE} as production-image-json-logging
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/application_root \
     UVICORN_LOG_CONFIG=/application_server/logging_configuration_file.yaml \
-    UVICORN_LOG_LEVEL="trace"
+    UVICORN_LOG_LEVEL=trace
 
-COPY --from=base-image /application_root/.venv /application_root/.venv
-COPY --from=base-image /application_server/start_uvicorn.sh /application_server/
+WORKDIR /application_root
 
-# This RUN statement at this place fixes an issue while running the tests with GitHub Actions.
-# Tests work reliable locally on my machine or running GitHub Actions using act.
-# There is a bug with multistage builds in GitHub Actions which I can also reliable reproduce
-# see: https://github.com/moby/moby/issues/37965
-# Will also check if I can fix that annoying issue with some tweaks to docker build args
-# see: https://gist.github.com/UrsaDK/f90c9632997a70cfe2a6df2797731ac8
-
-# Use a non-root user to run the application
-# see: https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#user
-RUN adduser --system --no-create-home python_application
+COPY --from=production-dependencies-build-stage /application_root/.venv /application_root/.venv
+COPY --from=production-dependencies-build-stage /application_server/start_uvicorn.sh /application_server/start_uvicorn.sh
 
 # Adding log configuration for Uvicorn
 COPY /application_server/logging_configuration_file.yaml /application_server/logging_configuration_file.yaml
-
+# Copy application files
 COPY /app /application_root/app/
 
-EXPOSE 80
-
-USER python_application
-
+# Activate entrypoint for running the uvicorn application server
 CMD ["/application_server/start_uvicorn.sh"]
 
-FROM base-image as development-image
-ENV UVICORN_RELOAD=1 \
-    UVICORN_LOG_LEVEL="debug"
+# Document the exposed port which was configured in start_uvicorn.sh
+# https://docs.docker.com/engine/reference/builder/#expose
+EXPOSE ${APPLICATION_SERVER_PORT}
 
-COPY --from=base-image $VIRTUAL_ENVIRONMENT_PATH $VIRTUAL_ENVIRONMENT_PATH
+FROM production-dependencies-build-stage as dev-dependencies-build-stage
 
 # install [tool.poetry.dev-dependencies]
 RUN poetry install --no-interaction --no-root
+
+FROM ${OFFICIAL_PYTHON_IMAGE} as development-image
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONPATH=/application_root \
+    UVICORN_RELOAD=1 \
+    UVICORN_LOG_LEVEL=debug
+
+WORKDIR /application_root
+
+COPY --from=dev-dependencies-build-stage /application_root/.venv /application_root/.venv
+COPY --from=dev-dependencies-build-stage /application_server/start_uvicorn.sh /application_server/
 
 COPY . /application_root/
 
-FROM base-image as test-base-image
-ENV UVICORN_LOG_LEVEL="debug"
+# Activate entrypoint for running the uvicorn application server
+CMD ["/application_server/start_uvicorn.sh"]
 
-COPY --from=base-image $VIRTUAL_ENVIRONMENT_PATH $VIRTUAL_ENVIRONMENT_PATH
+# Document the exposed port which was configured in start_uvicorn.sh
+# https://docs.docker.com/engine/reference/builder/#expose
+EXPOSE ${APPLICATION_SERVER_PORT}
 
-# install [tool.poetry.dev-dependencies]
-RUN poetry install --no-interaction --no-root
+FROM ${OFFICIAL_PYTHON_IMAGE} as test-base-image
+
+COPY --from=dev-dependencies-build-stage /application_root/.venv /application_root/.venv
 
 COPY /app /application_root/app/
 COPY /tests /application_root/tests/
 
+
 # image for running pep8 checks
 FROM test-base-image as black-test-image
 
+WORKDIR /application_root
+
+COPY --from=dev-dependencies-build-stage /entrypoints/black_entrypoint.sh /entrypoints/
+
 ENTRYPOINT /entrypoints/black_entrypoint.sh $0 $@
 
-CMD ["--target-version py39", "--check", " --line-length 80", "app"]
+CMD ["--target-version py39", "--check", " --line-length 80", "."]
 
 # image for running unit tests
 FROM test-base-image as unit-test-image
+
+WORKDIR /application_root
+
+COPY --from=dev-dependencies-build-stage /entrypoints/pytest_entrypoint.sh /entrypoints/
 
 ENTRYPOINT /entrypoints/pytest_entrypoint.sh $0 $@
 
