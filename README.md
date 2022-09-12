@@ -36,6 +36,9 @@ The image just provides a platform that you can use to build upon your own multi
 application itself. Please check out the [example application](https://github.com/max-pfeiffer/uvicorn-poetry/tree/main/examples/fast_api_multistage_build)
 on how to use that image and build containers efficiently.
 
+There is also another [sample app demonstrating a very simple single stage build](https://github.com/max-pfeiffer/uvicorn-poetry/tree/main/examples/fast_api_singlestage_build).
+If you are not concerned about image size, go for that image.
+
 Please be aware that your application needs an application layout without src folder which is proposed in
 [fastapi-realworld-example-app](https://github.com/nsidnev/fastapi-realworld-example-app).
 The application and test structure needs to be like that:
