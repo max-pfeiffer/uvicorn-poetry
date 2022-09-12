@@ -1,21 +1,28 @@
-import time
+from time import sleep
+from uuid import uuid4
 
+import pytest
 from docker.models.containers import Container
 
 from build.constants import APPLICATION_SERVER_PORT
-from tests.constants import TEST_CONTAINER_NAME, SLEEP_TIME
+from tests.constants import SLEEP_TIME
 
 
+@pytest.mark.parametrize(
+    "cleaned_up_test_container", [str(uuid4())], indirect=True
+)
 def test_worker_reload(
-    docker_client, fast_api_multistage_development_image
+    docker_client,
+    fast_api_multistage_development_image,
+    cleaned_up_test_container,
 ) -> None:
     test_container: Container = docker_client.containers.run(
         fast_api_multistage_development_image,
-        name=TEST_CONTAINER_NAME,
+        name=cleaned_up_test_container,
         ports={APPLICATION_SERVER_PORT: "80"},
         detach=True,
     )
-    time.sleep(SLEEP_TIME)
+    sleep(SLEEP_TIME)
 
     for number in range(1, 4):
         (exit_code, output) = test_container.exec_run(
@@ -23,7 +30,7 @@ def test_worker_reload(
         )
         assert exit_code == 0
         assert output.decode("utf-8") == ""
-        time.sleep(SLEEP_TIME)
+        sleep(SLEEP_TIME)
 
         logs: str = test_container.logs().decode("utf-8")
         logs_list: list[str] = logs.split("\n")

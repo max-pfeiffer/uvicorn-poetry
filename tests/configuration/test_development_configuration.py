@@ -1,12 +1,13 @@
 import json
 from time import sleep
+from uuid import uuid4
 
+import pytest
 import requests
 from docker.models.containers import Container
 
 from build.constants import APPLICATION_SERVER_PORT
 from tests.constants import (
-    TEST_CONTAINER_NAME,
     SLEEP_TIME,
     HELLO_WORLD,
     DEVELOPMENT_UVICORN_CONFIG,
@@ -24,12 +25,17 @@ def verify_container_config(container: UvicornPoetryContainerConfig) -> None:
     assert config_data["port"] == DEVELOPMENT_UVICORN_CONFIG["port"]
 
 
+@pytest.mark.parametrize(
+    "cleaned_up_test_container", [str(uuid4())], indirect=True
+)
 def test_development_configuration(
-    docker_client, fast_api_multistage_development_image
+    docker_client,
+    fast_api_multistage_development_image,
+    cleaned_up_test_container,
 ) -> None:
     test_container: Container = docker_client.containers.run(
         fast_api_multistage_development_image,
-        name=TEST_CONTAINER_NAME,
+        name=cleaned_up_test_container,
         ports={APPLICATION_SERVER_PORT: "80"},
         detach=True,
     )

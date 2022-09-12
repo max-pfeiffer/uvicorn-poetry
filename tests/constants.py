@@ -1,6 +1,5 @@
 from build.constants import APPLICATION_SERVER_PORT
 
-TEST_CONTAINER_NAME: str = "uvicorn-poetry-test"
 SLEEP_TIME: float = 3.0
 HELLO_WORLD: str = "Hello World!"
 DEFAULT_UVICORN_CONFIG: dict[str, str] = {

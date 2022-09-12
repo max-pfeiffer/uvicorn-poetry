@@ -2,7 +2,6 @@ from random import randrange
 
 import docker
 import pytest
-from docker.errors import NotFound
 from docker.models.images import Image
 from semver import VersionInfo
 
@@ -14,7 +13,6 @@ from build.images import (
     FastApiMultistageImage,
     FastApiSinglestageImage,
 )
-from tests.constants import TEST_CONTAINER_NAME
 from tests.utils import ImageTagComponents
 
 
@@ -172,22 +170,10 @@ def fast_api_singlestage_image(
     docker_client.images.remove(image_tag, force=True)
 
 
-@pytest.fixture(scope="function", autouse=True)
-def prepare_docker_env_for_test_execution(docker_client) -> None:
-    # Remove old container
-    try:
-        old_container = docker_client.containers.get(TEST_CONTAINER_NAME)
-        old_container.stop()
-        old_container.remove()
-    except NotFound:
-        pass
-
-    yield None
-
-    # Remove old container
-    try:
-        old_container = docker_client.containers.get(TEST_CONTAINER_NAME)
-        old_container.stop()
-        old_container.remove()
-    except NotFound:
-        pass
+@pytest.fixture(scope="function")
+def cleaned_up_test_container(docker_client, request) -> None:
+    test_container_name: str = request.param
+    yield test_container_name
+    test_container = docker_client.containers.get(test_container_name)
+    test_container.stop()
+    test_container.remove()

@@ -1,20 +1,27 @@
 from time import sleep
+from uuid import uuid4
 
+import pytest
 from docker.models.containers import Container
 
 from build.constants import (
     PYTHON_VERSIONS,
 )
-from tests.constants import TEST_CONTAINER_NAME, SLEEP_TIME
+from tests.constants import SLEEP_TIME
 from tests.utils import ImageTagComponents
 
 
+@pytest.mark.parametrize(
+    "cleaned_up_test_container", [str(uuid4())], indirect=True
+)
 def test_python_version(
-    docker_client, fast_api_multistage_production_image
+    docker_client,
+    fast_api_multistage_production_image,
+    cleaned_up_test_container,
 ) -> None:
     test_container: Container = docker_client.containers.run(
         fast_api_multistage_production_image,
-        name=TEST_CONTAINER_NAME,
+        name=cleaned_up_test_container,
         detach=True,
     )
     sleep(SLEEP_TIME)
