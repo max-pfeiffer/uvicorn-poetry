@@ -8,7 +8,7 @@ It provides [Poetry](https://python-poetry.org/) for managing dependencies and s
 
 This image aims to follow the best practices for a production grade container image for hosting Python web applications based
 on micro frameworks like [FastAPI](https://fastapi.tiangolo.com/).
-Therefore source and documentation contain a lot of references to documentation of dependencies used in this project, so users
+Therefore, source and documentation contain a lot of references to documentation of dependencies used in this project, so users
 of this image can follow up on that.
 
 Any feedback is highly appreciated and will be considered.
@@ -80,7 +80,7 @@ If you would like to do a deep dive on all the configuration options please see 
 [official Uvicorn documentation](https://www.uvicorn.org/settings/).
 
 ### Important change since V2.0.0
-These custom environment variables are not supported any more: 
+These custom environment variables are not supported anymore: 
 1. `LOG_LEVEL` : The granularity of Error log outputs.
 2. `LOG_CONFIG_FILE` : Logging configuration file.
 3. `RELOAD` : Enable auto-reload.

@@ -11,6 +11,7 @@ from build.constants import (
     POETRY_VERSION,
     APPLICATION_SERVER_PORT,
     FAST_API_SINGLESTAGE_IMAGE_NAME,
+    OFFICIAL_PYTHON_IMAGES,
 )
 
 
@@ -42,8 +43,7 @@ class UvicornGunicornPoetryImage(DockerImage):
         self.version_tag = version
 
         buildargs: dict[str, str] = {
-            "OFFICIAL_PYTHON_IMAGE": BASE_IMAGES[target_architecture],
-            "IMAGE_POETRY_VERSION": POETRY_VERSION,
+            "BASE_IMAGE": BASE_IMAGES[target_architecture],
             "APPLICATION_SERVER_PORT": APPLICATION_SERVER_PORT,
         }
         tag: str = f"{self.image_name}:{self.version_tag}-{target_architecture}"
@@ -73,14 +73,18 @@ class FastApiSinglestageImage(DockerImage):
         # see: https://docs.docker.com/engine/reference/commandline/tag/
         self.image_name: str = FAST_API_SINGLESTAGE_IMAGE_NAME
 
-    def build(self, target_architecture: str, version: str, base_image_tag: str) -> Image:
+    def build(
+        self, target_architecture: str, version: str, base_image_tag: str
+    ) -> Image:
         self.version_tag = version
 
         self.image_tag = f"{self.version_tag}-{target_architecture}"
 
         buildargs: dict[str, str] = {
             "BASE_IMAGE_NAME_AND_TAG": base_image_tag,
-            "OFFICIAL_PYTHON_IMAGE": BASE_IMAGES[target_architecture],
+            "OFFICIAL_PYTHON_IMAGE": OFFICIAL_PYTHON_IMAGES[
+                target_architecture
+            ],
             "APPLICATION_SERVER_PORT": APPLICATION_SERVER_PORT,
         }
         image: Image = self.docker_client.images.build(
@@ -109,7 +113,11 @@ class FastApiMultistageImage(DockerImage):
         self.image_name: str = FAST_API_MULTISTAGE_IMAGE_NAME
 
     def build(
-        self, target_architecture: str, target: str, version: str, base_image_tag: str
+        self,
+        target_architecture: str,
+        target: str,
+        version: str,
+        base_image_tag: str,
     ) -> Image:
         self.version_tag = version
 
@@ -117,7 +125,9 @@ class FastApiMultistageImage(DockerImage):
 
         buildargs: dict[str, str] = {
             "BASE_IMAGE_NAME_AND_TAG": base_image_tag,
-            "OFFICIAL_PYTHON_IMAGE": BASE_IMAGES[target_architecture],
+            "OFFICIAL_PYTHON_IMAGE": OFFICIAL_PYTHON_IMAGES[
+                target_architecture
+            ],
             "APPLICATION_SERVER_PORT": APPLICATION_SERVER_PORT,
         }
         image: Image = self.docker_client.images.build(

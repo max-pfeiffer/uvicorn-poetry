@@ -58,9 +58,9 @@ def test_multistage_image(
     "cleaned_up_test_container", [str(uuid4())], indirect=True
 )
 def test_single_stage_image(
-        docker_client,
-        fast_api_singlestage_image,
-        cleaned_up_test_container,
+    docker_client,
+    fast_api_singlestage_image,
+    cleaned_up_test_container,
 ) -> None:
     test_container: Container = docker_client.containers.run(
         fast_api_singlestage_image,
