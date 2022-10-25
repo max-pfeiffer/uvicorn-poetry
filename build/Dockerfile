@@ -1,9 +1,8 @@
-# References: using official Python images
-# https://hub.docker.com/_/python
-ARG OFFICIAL_PYTHON_IMAGE
-ARG IMAGE_POETRY_VERSION
+# Base image: https://hub.docker.com/r/pfeiffermax/python-poetry
+# Dockerfile: https://github.com/max-pfeiffer/python-poetry/blob/main/build/Dockerfile
+ARG BASE_IMAGE
 ARG APPLICATION_SERVER_PORT
-FROM ${OFFICIAL_PYTHON_IMAGE}
+FROM ${BASE_IMAGE}
 
 LABEL maintainer="Max Pfeiffer <max@maxpfeiffer.ch>"
 
@@ -19,32 +18,17 @@ LABEL maintainer="Max Pfeiffer <max@maxpfeiffer.ch>"
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    PIP_NO_CACHE_DIR=off \
-    PIP_DISABLE_PIP_VERSION_CHECK=on \
-    PIP_DEFAULT_TIMEOUT=100 \
-    POETRY_VERSION=${IMAGE_POETRY_VERSION} \
-    POETRY_HOME="/opt/poetry" \
-    POETRY_VIRTUALENVS_IN_PROJECT=true \
     PYTHONPATH=/application_root \
+    POETRY_VIRTUALENVS_IN_PROJECT=true \
     VIRTUAL_ENVIRONMENT_PATH="/application_root/.venv"
 
-ENV PATH="$POETRY_HOME/bin:$VIRTUAL_ENVIRONMENT_PATH/bin:$PATH"
+ENV PATH="$VIRTUAL_ENVIRONMENT_PATH/bin:$PATH"
 
 # Set the WORKDIR to the application root. This needed for the entrypoints to
 # work. Also Uvicorn --reload feature relies by default on the current work dir.
 # https://www.uvicorn.org/settings/#development
 # https://docs.docker.com/engine/reference/builder/#workdir
 WORKDIR ${PYTHONPATH}
-
-# https://python-poetry.org/docs/#osx--linux--bashonwindows-install-instructions
-RUN apt-get update \
-    && apt-get install --no-install-recommends -y \
-        build-essential \
-        curl \
-    && curl -sSL https://install.python-poetry.org | python - \
-    && apt-get purge --auto-remove -y \
-      build-essential \
-      curl
 
 COPY ./scripts/start_uvicorn.sh /application_server/
 RUN chmod +x /application_server/start_uvicorn.sh
