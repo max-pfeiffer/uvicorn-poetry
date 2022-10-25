@@ -31,6 +31,10 @@ testpaths = [
 line-length = 80
 target-version = ["py39"]
 
+[tool.pylint.main]
+errors-only = true
+recursive = "y"
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
