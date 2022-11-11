@@ -7,7 +7,7 @@ from build.constants import (
     TARGET_ARCHITECTURES,
     UVICORN_POETRY_IMAGE_NAME,
 )
-from build.images import UvicornGunicornPoetryImage
+from build.images import UvicornPoetryImage
 
 environment_variables_loaded: bool = load_dotenv()
 
@@ -20,8 +20,8 @@ def main() -> None:
     docker_client: docker.client = docker.from_env()
 
     for target_architecture in TARGET_ARCHITECTURES:
-        new_uvicorn_gunicorn_poetry_image: UvicornGunicornPoetryImage = (
-            UvicornGunicornPoetryImage(docker_client)
+        new_uvicorn_gunicorn_poetry_image: UvicornPoetryImage = (
+            UvicornPoetryImage(docker_client)
         )
 
         # Delete old existing images

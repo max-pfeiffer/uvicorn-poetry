@@ -1,3 +1,5 @@
+# The Poetry installation is provided through the base image. Please check the
+# base image if you interested in the details.
 # Base image: https://hub.docker.com/r/pfeiffermax/python-poetry
 # Dockerfile: https://github.com/max-pfeiffer/python-poetry/blob/main/build/Dockerfile
 ARG BASE_IMAGE
@@ -6,19 +8,12 @@ FROM ${BASE_IMAGE}
 
 LABEL maintainer="Max Pfeiffer <max@maxpfeiffer.ch>"
 
-# References:
-# https://docs.python.org/3/using/cmdline.html#envvar-PYTHONUNBUFFERED
-# https://docs.python.org/3/using/cmdline.html#envvar-PYTHONDONTWRITEBYTECODE
-# https://pip.pypa.io/en/stable/topics/caching/#avoiding-caching
-# https://pip.pypa.io/en/stable/cli/pip/?highlight=PIP_NO_CACHE_DIR#cmdoption-no-cache-dir
-# https://pip.pypa.io/en/stable/cli/pip/?highlight=PIP_DISABLE_PIP_VERSION_CHECK#cmdoption-disable-pip-version-check
-# https://pip.pypa.io/en/stable/cli/pip/?highlight=PIP_DEFAULT_TIMEOUT#cmdoption-timeout
-# https://pip.pypa.io/en/stable/topics/configuration/#environment-variables
-# https://python-poetry.org/docs/#installation
-
+    # https://docs.python.org/3/using/cmdline.html#envvar-PYTHONUNBUFFERED
 ENV PYTHONUNBUFFERED=1 \
+    # https://docs.python.org/3/using/cmdline.html#envvar-PYTHONDONTWRITEBYTECODE
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/application_root \
+    # https://python-poetry.org/docs/configuration/#virtualenvsin-project
     POETRY_VIRTUALENVS_IN_PROJECT=true \
     VIRTUAL_ENVIRONMENT_PATH="/application_root/.venv"
 

@@ -17,3 +17,4 @@ JSON_LOGGING_CONFIG: dict[str, str] = {
     "host": "0.0.0.0",
     "port": APPLICATION_SERVER_PORT,
 }
+EXPOSED_CONTAINER_PORT: str = "80"

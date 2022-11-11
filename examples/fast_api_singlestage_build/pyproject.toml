@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "fast_api_multistage_build"
+name = "fast_api_singlestage_build"
 version = "1.0.0"
 description = "Example app for testing and demonstrating uvicorn-poetry docker image."
 authors = ["Max Pfeiffer <max@maxpfeiffer.ch>"]

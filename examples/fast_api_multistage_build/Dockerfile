@@ -88,6 +88,8 @@ COPY --from=dev-dependencies-build-stage /application_root/.venv /application_ro
 COPY /app /application_root/app/
 COPY /tests /application_root/tests/
 
+# Add pyproject.toml because it contains the configuration for black and pytest
+COPY /pyproject.toml /application_root/
 
 # image for running pep8 checks
 FROM test-base-image as black-test-image
@@ -98,10 +100,10 @@ COPY --from=dev-dependencies-build-stage /entrypoints/black_entrypoint.sh /entry
 
 ENTRYPOINT /entrypoints/black_entrypoint.sh $0 $@
 
-CMD ["--target-version py39", "--check", " --line-length 80", "."]
+CMD ["--check", "."]
 
 # image for running unit tests
-FROM test-base-image as unit-test-image
+FROM test-base-image as test-image
 
 WORKDIR /application_root
 
