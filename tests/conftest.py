@@ -9,7 +9,7 @@ from build.constants import (
     TARGET_ARCHITECTURES,
 )
 from build.images import (
-    UvicornGunicornPoetryImage,
+    UvicornPoetryImage,
     FastApiMultistageImage,
     FastApiSinglestageImage,
 )
@@ -31,10 +31,10 @@ def version() -> str:
 
 
 @pytest.fixture(scope="session", params=TARGET_ARCHITECTURES)
-def uvicorn_gunicorn_poetry_image(docker_client, version, request) -> str:
+def uvicorn_poetry_image(docker_client, version, request) -> str:
     target_architecture: str = request.param
 
-    uvicorn_gunicorn_poetry_image: Image = UvicornGunicornPoetryImage(
+    uvicorn_gunicorn_poetry_image: Image = UvicornPoetryImage(
         docker_client
     ).build(target_architecture, version=version)
     image_tag: str = uvicorn_gunicorn_poetry_image.tags[0]
@@ -44,10 +44,10 @@ def uvicorn_gunicorn_poetry_image(docker_client, version, request) -> str:
 
 @pytest.fixture(scope="session")
 def fast_api_multistage_production_image(
-    docker_client, uvicorn_gunicorn_poetry_image
+    docker_client, uvicorn_poetry_image
 ) -> str:
     components: ImageTagComponents = ImageTagComponents.create_from_tag(
-        uvicorn_gunicorn_poetry_image
+        uvicorn_poetry_image
     )
 
     target: str = "production-image"
@@ -57,7 +57,7 @@ def fast_api_multistage_production_image(
         components.target_architecture,
         target,
         image_version,
-        uvicorn_gunicorn_poetry_image,
+        uvicorn_poetry_image,
     )
     image_tag: str = image.tags[0]
     yield image_tag
@@ -66,10 +66,10 @@ def fast_api_multistage_production_image(
 
 @pytest.fixture(scope="session")
 def fast_api_multistage_production_image_json_logging(
-    docker_client, uvicorn_gunicorn_poetry_image
+    docker_client, uvicorn_poetry_image
 ) -> str:
     components: ImageTagComponents = ImageTagComponents.create_from_tag(
-        uvicorn_gunicorn_poetry_image
+        uvicorn_poetry_image
     )
 
     target: str = "production-image-json-logging"
@@ -79,7 +79,7 @@ def fast_api_multistage_production_image_json_logging(
         components.target_architecture,
         target,
         image_version,
-        uvicorn_gunicorn_poetry_image,
+        uvicorn_poetry_image,
     )
     image_tag: str = image.tags[0]
     yield image_tag
@@ -88,10 +88,10 @@ def fast_api_multistage_production_image_json_logging(
 
 @pytest.fixture(scope="session")
 def fast_api_multistage_development_image(
-    docker_client, uvicorn_gunicorn_poetry_image
+    docker_client, uvicorn_poetry_image
 ) -> str:
     components: ImageTagComponents = ImageTagComponents.create_from_tag(
-        uvicorn_gunicorn_poetry_image
+        uvicorn_poetry_image
     )
 
     target: str = "development-image"
@@ -101,7 +101,7 @@ def fast_api_multistage_development_image(
         components.target_architecture,
         target,
         image_version,
-        uvicorn_gunicorn_poetry_image,
+        uvicorn_poetry_image,
     )
     image_tag: str = image.tags[0]
     yield image_tag
@@ -110,10 +110,10 @@ def fast_api_multistage_development_image(
 
 @pytest.fixture(scope="session")
 def fast_api_multistage_development_black_test_image(
-    docker_client, uvicorn_gunicorn_poetry_image
+    docker_client, uvicorn_poetry_image
 ) -> str:
     components: ImageTagComponents = ImageTagComponents.create_from_tag(
-        uvicorn_gunicorn_poetry_image
+        uvicorn_poetry_image
     )
 
     target: str = "black-test-image"
@@ -123,7 +123,7 @@ def fast_api_multistage_development_black_test_image(
         components.target_architecture,
         target,
         image_version,
-        uvicorn_gunicorn_poetry_image,
+        uvicorn_poetry_image,
     )
     image_tag: str = image.tags[0]
     yield image_tag
@@ -132,10 +132,10 @@ def fast_api_multistage_development_black_test_image(
 
 @pytest.fixture(scope="session")
 def fast_api_multistage_development_unit_test_image(
-    docker_client, uvicorn_gunicorn_poetry_image
+    docker_client, uvicorn_poetry_image
 ) -> str:
     components: ImageTagComponents = ImageTagComponents.create_from_tag(
-        uvicorn_gunicorn_poetry_image
+        uvicorn_poetry_image
     )
 
     target: str = "unit-test-image"
@@ -145,7 +145,7 @@ def fast_api_multistage_development_unit_test_image(
         components.target_architecture,
         target,
         image_version,
-        uvicorn_gunicorn_poetry_image,
+        uvicorn_poetry_image,
     )
     image_tag: str = image.tags[0]
     yield image_tag
@@ -153,17 +153,15 @@ def fast_api_multistage_development_unit_test_image(
 
 
 @pytest.fixture(scope="session")
-def fast_api_singlestage_image(
-    docker_client, uvicorn_gunicorn_poetry_image
-) -> str:
+def fast_api_singlestage_image(docker_client, uvicorn_poetry_image) -> str:
     components: ImageTagComponents = ImageTagComponents.create_from_tag(
-        uvicorn_gunicorn_poetry_image
+        uvicorn_poetry_image
     )
 
     image: Image = FastApiSinglestageImage(docker_client).build(
         components.target_architecture,
         components.version,
-        uvicorn_gunicorn_poetry_image,
+        uvicorn_poetry_image,
     )
     image_tag: str = image.tags[0]
     yield image_tag

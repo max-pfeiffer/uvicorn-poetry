@@ -11,6 +11,7 @@ from tests.constants import (
     SLEEP_TIME,
     HELLO_WORLD,
     DEFAULT_UVICORN_CONFIG,
+    EXPOSED_CONTAINER_PORT,
 )
 from tests.utils import UvicornPoetryContainerConfig
 
@@ -18,7 +19,7 @@ from tests.utils import UvicornPoetryContainerConfig
 def verify_container_config(
     container_config: UvicornPoetryContainerConfig,
 ) -> None:
-    response = requests.get("http://127.0.0.1")
+    response = requests.get(f"http://127.0.0.1:{EXPOSED_CONTAINER_PORT}")
     assert json.loads(response.text) == HELLO_WORLD
 
     config_data: dict[str, str] = container_config.get_uvicorn_conf()
@@ -38,7 +39,7 @@ def test_multistage_image(
     test_container: Container = docker_client.containers.run(
         fast_api_multistage_production_image,
         name=cleaned_up_test_container,
-        ports={APPLICATION_SERVER_PORT: "80"},
+        ports={APPLICATION_SERVER_PORT: EXPOSED_CONTAINER_PORT},
         detach=True,
     )
     uvicorn_gunicorn_container_config: UvicornPoetryContainerConfig = (
@@ -65,7 +66,7 @@ def test_single_stage_image(
     test_container: Container = docker_client.containers.run(
         fast_api_singlestage_image,
         name=cleaned_up_test_container,
-        ports={APPLICATION_SERVER_PORT: "80"},
+        ports={APPLICATION_SERVER_PORT: EXPOSED_CONTAINER_PORT},
         detach=True,
     )
     uvicorn_gunicorn_container_config: UvicornPoetryContainerConfig = (

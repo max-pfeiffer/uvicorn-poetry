@@ -8,7 +8,6 @@ from build.constants import (
     UVICORN_POETRY_IMAGE_NAME,
     BASE_IMAGES,
     FAST_API_MULTISTAGE_IMAGE_NAME,
-    POETRY_VERSION,
     APPLICATION_SERVER_PORT,
     FAST_API_SINGLESTAGE_IMAGE_NAME,
     OFFICIAL_PYTHON_IMAGES,
@@ -27,7 +26,7 @@ class DockerImage:
         self.dockerfile_name: str = "Dockerfile"
 
 
-class UvicornGunicornPoetryImage(DockerImage):
+class UvicornPoetryImage(DockerImage):
     def __init__(self, docker_client: docker.client):
         super().__init__(docker_client)
         self.absolute_docker_image_directory_path: Path = (
@@ -82,10 +81,6 @@ class FastApiSinglestageImage(DockerImage):
 
         buildargs: dict[str, str] = {
             "BASE_IMAGE_NAME_AND_TAG": base_image_tag,
-            "OFFICIAL_PYTHON_IMAGE": OFFICIAL_PYTHON_IMAGES[
-                target_architecture
-            ],
-            "APPLICATION_SERVER_PORT": APPLICATION_SERVER_PORT,
         }
         image: Image = self.docker_client.images.build(
             path=str(self.absolute_docker_image_directory_path),
