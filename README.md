@@ -33,10 +33,10 @@ You can use the [uvicorn-poetry-fastapi-project-template](https://github.com/max
 It requires [Cookiecutter](https://github.com/cookiecutter/cookiecutter).
 
 The image just provides a platform that you can use to build upon your own multistage builds. So it consequently does not contain an
-application itself. Please check out the [example application](https://github.com/max-pfeiffer/uvicorn-poetry/tree/main/examples/fast_api_multistage_build)
+application itself. Please check out the [example application for multistage builds](https://github.com/max-pfeiffer/uvicorn-poetry/tree/main/examples/fast_api_multistage_build)
 on how to use that image and build containers efficiently.
 
-There is also another [sample app demonstrating a very simple single stage build](https://github.com/max-pfeiffer/uvicorn-poetry/tree/main/examples/fast_api_singlestage_build).
+There is also another [example app demonstrating a very simple single stage build](https://github.com/max-pfeiffer/uvicorn-poetry/tree/main/examples/fast_api_singlestage_build).
 If you are not concerned about image size, go for that image.
 
 Please be aware that your application needs an application layout without src folder which is proposed in

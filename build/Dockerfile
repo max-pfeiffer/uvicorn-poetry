@@ -13,6 +13,7 @@ ENV PYTHONUNBUFFERED=1 \
     # https://docs.python.org/3/using/cmdline.html#envvar-PYTHONDONTWRITEBYTECODE
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/application_root \
+    # https://python-poetry.org/docs/configuration/#virtualenvsin-project
     POETRY_VIRTUALENVS_IN_PROJECT=true \
     VIRTUAL_ENVIRONMENT_PATH="/application_root/.venv"
 

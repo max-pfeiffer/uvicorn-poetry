@@ -131,14 +131,14 @@ def fast_api_multistage_development_black_test_image(
 
 
 @pytest.fixture(scope="session")
-def fast_api_multistage_development_unit_test_image(
+def fast_api_multistage_development_test_image(
     docker_client, uvicorn_poetry_image
 ) -> str:
     components: ImageTagComponents = ImageTagComponents.create_from_tag(
         uvicorn_poetry_image
     )
 
-    target: str = "unit-test-image"
+    target: str = "test-image"
     image_version = f"{components.version}-{target}"
 
     image: Image = FastApiMultistageImage(docker_client).build(

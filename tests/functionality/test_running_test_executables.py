@@ -22,13 +22,13 @@ def test_running_black_test_image(
 @pytest.mark.parametrize(
     "cleaned_up_test_container", [str(uuid4())], indirect=True
 )
-def test_running_unit_test_image(
+def test_running_test_image(
     docker_client,
-    fast_api_multistage_development_unit_test_image,
+    fast_api_multistage_development_test_image,
     cleaned_up_test_container,
 ) -> None:
     api_response: dict = docker_client.containers.run(
-        fast_api_multistage_development_unit_test_image,
+        fast_api_multistage_development_test_image,
         name=cleaned_up_test_container,
         detach=True,
     ).wait()
