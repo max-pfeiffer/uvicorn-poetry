@@ -3,11 +3,18 @@
 ARG BASE_IMAGE_NAME_AND_TAG=pfeiffermax/uvicorn-poetry:2.1.0-python3.9.14-slim-bullseye
 FROM ${BASE_IMAGE_NAME_AND_TAG}
 
+# Switch to root user as this needed for running poetry to install the dependencies
+USER root
+
 # install [tool.poetry.dependencies]
 # this will install virtual environment into /.venv because of POETRY_VIRTUALENVS_IN_PROJECT=true
 # see: https://python-poetry.org/docs/configuration/#virtualenvsin-project
-COPY ./poetry.lock ./pyproject.toml /application_root/
+COPY --chown=python_application:python_application ./poetry.lock ./pyproject.toml /application_root/
 RUN poetry install --no-interaction --no-root
 
-# Copy application files
-COPY . /application_root/
+# Copy application
+COPY --chown=python_application:python_application ./app /application_root/app/
+
+# Switch back to the unpriveledged user which is configured in the base image
+# to run the application
+USER 1001
