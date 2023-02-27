@@ -30,6 +30,7 @@ jobs:
           black --check .
 
   run-tests:
+    needs: code-quality
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout Repository
