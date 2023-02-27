@@ -4,6 +4,7 @@ from uuid import uuid4
 
 import pytest
 import requests
+from docker import APIClient
 from docker.models.containers import Container
 
 from build.constants import APPLICATION_SERVER_PORT
@@ -14,7 +15,6 @@ from tests.constants import (
     EXPOSED_CONTAINER_PORT,
 )
 from tests.utils import UvicornPoetryContainerConfig
-from docker import APIClient
 
 
 def verify_container_config(

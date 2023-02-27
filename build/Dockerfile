@@ -15,6 +15,7 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONPATH=/application_root \
     # https://python-poetry.org/docs/configuration/#virtualenvsin-project
     POETRY_VIRTUALENVS_IN_PROJECT=true \
+    POETRY_CACHE_DIR="/application_root/.cache" \
     VIRTUAL_ENVIRONMENT_PATH="/application_root/.venv" \
     APPLICATION_SERVER_PORT=$APPLICATION_SERVER_PORT
 
@@ -32,6 +33,11 @@ RUN groupadd -g 1001 python_application && \
 # https://docs.docker.com/engine/reference/builder/#workdir
 WORKDIR ${PYTHONPATH}
 RUN chown python_application:python_application ${PYTHONPATH}
+
+# Create cache directory and set permissions because user 1001 has no home
+# directory and poetry cache directory.
+# https://python-poetry.org/docs/configuration/#cache-directory
+RUN mkdir ${POETRY_CACHE_DIR} && chown python_application:python_application ${POETRY_CACHE_DIR}
 
 # Document the exposed port
 # https://docs.docker.com/engine/reference/builder/#expose
