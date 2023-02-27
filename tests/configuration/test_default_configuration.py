@@ -14,6 +14,7 @@ from tests.constants import (
     EXPOSED_CONTAINER_PORT,
 )
 from tests.utils import UvicornPoetryContainerConfig
+from docker import APIClient
 
 
 def verify_container_config(
@@ -53,3 +54,14 @@ def test_multistage_image(
     test_container.start()
     sleep(SLEEP_TIME)
     verify_container_config(uvicorn_gunicorn_container_config)
+
+
+def test_exposed_application_server_port(
+    fast_api_multistage_production_image,
+) -> None:
+    api_client = APIClient()
+    inspection_result: dict = api_client.inspect_image(
+        fast_api_multistage_production_image
+    )
+    exposed_ports: dict = inspection_result["ContainerConfig"]["ExposedPorts"]
+    assert f"{APPLICATION_SERVER_PORT}/tcp" in exposed_ports.keys()
