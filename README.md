@@ -2,7 +2,7 @@
 ![pipeline workflow](https://github.com/max-pfeiffer/uvicorn-poetry/actions/workflows/pipeline.yml/badge.svg)
 ![Docker Image Size (latest semver)](https://img.shields.io/docker/image-size/pfeiffermax/uvicorn-poetry?sort=semver)
 ![Docker Pulls](https://img.shields.io/docker/pulls/pfeiffermax/uvicorn-poetry)
-# uvicorn-poetry
+# uvicorn-poetry - Docker image for FastAPI
 This Docker image provides a platform to run Python applications with [Uvicorn](https://github.com/encode/uvicorn) on [Kubernetes](https://kubernetes.io/) container orchestration system.
 It provides [Poetry](https://python-poetry.org/) for managing dependencies and setting up a virtual environment in the container.
 
