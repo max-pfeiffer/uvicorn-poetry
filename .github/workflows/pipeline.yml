@@ -23,7 +23,7 @@ jobs:
       - name: pylint
         run: |
           source .venv/bin/activate
-          pylint publish.py build tests
+          pylint build tests
       - name: black
         run: |
           source .venv/bin/activate
