@@ -4,6 +4,7 @@ from uuid import uuid4
 
 import pytest
 import requests
+from docker import APIClient
 from docker.models.containers import Container
 
 from build.constants import APPLICATION_SERVER_PORT
@@ -55,28 +56,12 @@ def test_multistage_image(
     verify_container_config(uvicorn_gunicorn_container_config)
 
 
-@pytest.mark.parametrize(
-    "cleaned_up_test_container", [str(uuid4())], indirect=True
-)
-def test_single_stage_image(
-    docker_client,
-    fast_api_singlestage_image,
-    cleaned_up_test_container,
+def test_exposed_application_server_port(
+    fast_api_multistage_production_image,
 ) -> None:
-    test_container: Container = docker_client.containers.run(
-        fast_api_singlestage_image,
-        name=cleaned_up_test_container,
-        ports={APPLICATION_SERVER_PORT: EXPOSED_CONTAINER_PORT},
-        detach=True,
+    api_client = APIClient()
+    inspection_result: dict = api_client.inspect_image(
+        fast_api_multistage_production_image
     )
-    uvicorn_gunicorn_container_config: UvicornPoetryContainerConfig = (
-        UvicornPoetryContainerConfig(test_container)
-    )
-    sleep(SLEEP_TIME)
-    verify_container_config(uvicorn_gunicorn_container_config)
-    test_container.stop()
-
-    # Test restarting the container
-    test_container.start()
-    sleep(SLEEP_TIME)
-    verify_container_config(uvicorn_gunicorn_container_config)
+    exposed_ports: dict = inspection_result["ContainerConfig"]["ExposedPorts"]
+    assert f"{APPLICATION_SERVER_PORT}/tcp" in exposed_ports.keys()

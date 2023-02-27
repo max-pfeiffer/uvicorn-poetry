@@ -7,18 +7,18 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "3.9.*"
-python-dotenv = "0.21.0"
+python-dotenv = "1.0.0"
 
 [tool.poetry.dev-dependencies]
-pytest = "7.2.0"
+pytest = "7.2.1"
 pytest-cov = "4.0.0"
-coverage = "6.5.0"
+coverage = "7.2.1"
 docker = "6.0.1"
-requests = "2.28.1"
-black = "22.10.0"
-pre-commit = "2.20.0"
+requests = "2.28.2"
+black = "23.1.0"
+pre-commit = "3.1.0"
 semver = "2.13.0"
-pylint = "2.15.5"
+pylint = "2.16.2"
 
 # https://docs.pytest.org/en/latest/reference/customize.html
 [tool.pytest.ini_options]

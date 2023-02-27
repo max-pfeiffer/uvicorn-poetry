@@ -1,3 +1,6 @@
+.gitignore
+.idea
+.pytest_cache
 .venv
 .coverage
 Dockerfile

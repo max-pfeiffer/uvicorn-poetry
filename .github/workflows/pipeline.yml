@@ -23,13 +23,14 @@ jobs:
       - name: pylint
         run: |
           source .venv/bin/activate
-          pylint publish.py build tests
+          pylint build tests
       - name: black
         run: |
           source .venv/bin/activate
           black --check .
 
   run-tests:
+    needs: code-quality
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout Repository
@@ -88,4 +89,4 @@ jobs:
           DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
         run: |
           source .venv/bin/activate
-          python publish.py
+          python -m build.publish
