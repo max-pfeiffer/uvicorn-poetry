@@ -1,8 +1,0 @@
-.gitignore
-.idea
-.pytest_cache
-.venv
-.coverage
-Dockerfile
-README.md
-test_coverage_reports/

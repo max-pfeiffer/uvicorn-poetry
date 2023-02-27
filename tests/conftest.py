@@ -86,22 +86,6 @@ def fast_api_multistage_production_image_json_logging(
     docker_client.images.remove(image_tag, force=True)
 
 
-@pytest.fixture(scope="session")
-def fast_api_singlestage_image(docker_client, uvicorn_poetry_image) -> str:
-    components: ImageTagComponents = ImageTagComponents.create_from_tag(
-        uvicorn_poetry_image
-    )
-
-    image: Image = FastApiSinglestageImage(docker_client).build(
-        components.target_architecture,
-        components.version,
-        uvicorn_poetry_image,
-    )
-    image_tag: str = image.tags[0]
-    yield image_tag
-    docker_client.images.remove(image_tag, force=True)
-
-
 @pytest.fixture(scope="function")
 def cleaned_up_test_container(docker_client, request) -> None:
     test_container_name: str = request.param

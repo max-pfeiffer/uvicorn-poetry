@@ -31,12 +31,3 @@ def test_fast_api_multistage_build_versions(
         production_image_json_logging_components.version
         == production_image_json_logging_version_tag
     )
-
-
-def test_fast_api_singlestage_image_version(
-    fast_api_singlestage_image, version
-):
-    development_image_components: ImageTagComponents = (
-        ImageTagComponents.create_from_tag(fast_api_singlestage_image)
-    )
-    assert development_image_components.version == version
