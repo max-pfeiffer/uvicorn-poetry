@@ -1,5 +1,4 @@
 UVICORN_POETRY_IMAGE_NAME: str = "pfeiffermax/uvicorn-poetry"
-FAST_API_SINGLESTAGE_IMAGE_NAME: str = "fast-api-singlestage-build"
 FAST_API_MULTISTAGE_IMAGE_NAME: str = "fast-api-multistage-build"
 TARGET_ARCHITECTURES: list[str] = [
     "python3.9.16-bullseye",
@@ -21,12 +20,6 @@ BASE_IMAGES: dict = {
         3
     ]: "pfeiffermax/python-poetry:1.1.0-poetry1.3.2-python3.10.9-slim-bullseye@sha256:ee99ee20733201523728147ab0c9117d22266994a1919ec0d64937133a51f07d",
 }
-OFFICIAL_PYTHON_IMAGES: dict = {
-    TARGET_ARCHITECTURES[0]: "python:3.9.16-bullseye",
-    TARGET_ARCHITECTURES[1]: "python:3.9.16-slim-bullseye",
-    TARGET_ARCHITECTURES[2]: "python:3.10.9-bullseye",
-    TARGET_ARCHITECTURES[3]: "python:3.10.9-slim-bullseye",
-}
 PYTHON_VERSIONS: dict = {
     TARGET_ARCHITECTURES[0]: "3.9.16",
     TARGET_ARCHITECTURES[1]: "3.9.16",
@@ -34,6 +27,6 @@ PYTHON_VERSIONS: dict = {
     TARGET_ARCHITECTURES[3]: "3.10.9",
 }
 
-# As we are running the server with an unpriviledged user, we need to use
+# As we are running the server with an unprivileged user, we need to use
 # a high port.
 APPLICATION_SERVER_PORT: str = "8000"

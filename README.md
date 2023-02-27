@@ -23,10 +23,7 @@ Any feedback is highly appreciated and will be considered.
    2. Python v3.10, Debian or Debian-slim
 2. Poetry is available as Python package dependency management tool
 3. A virtual environment for the application and application server
-4. An [entrypoint for running the Python application with Uvicorn](https://github.com/max-pfeiffer/uvicorn-poetry/blob/main/build/scripts/start_uvicorn.sh)
-5. Additional entrypoints for [pytest](https://github.com/max-pfeiffer/uvicorn-poetry/blob/main/build/scripts/pytest_entrypoint.sh)
-   and [black](https://github.com/max-pfeiffer/uvicorn-poetry/blob/main/build/scripts/black_entrypoint.sh) which can be used in
-   multi stage builds for building docker executables
+4. The application is run with [Uvicorn](https://www.uvicorn.org) as application server
 
 ## Usage
 You can use the [uvicorn-poetry-fastapi-project-template](https://github.com/max-pfeiffer/uvicorn-poetry-fastapi-project-template) for your convenience.
@@ -35,9 +32,6 @@ It requires [Cookiecutter](https://github.com/cookiecutter/cookiecutter).
 The image just provides a platform that you can use to build upon your own multistage builds. So it consequently does not contain an
 application itself. Please check out the [example application for multistage builds](https://github.com/max-pfeiffer/uvicorn-poetry/tree/main/examples/fast_api_multistage_build)
 on how to use that image and build containers efficiently.
-
-There is also another [example app demonstrating a very simple single stage build](https://github.com/max-pfeiffer/uvicorn-poetry/tree/main/examples/fast_api_singlestage_build).
-If you are not concerned about image size, go for that image.
 
 Please be aware that your application needs an application layout without src folder which is proposed in
 [fastapi-realworld-example-app](https://github.com/nsidnev/fastapi-realworld-example-app).
@@ -71,13 +65,17 @@ in your application root which excludes your local virtual environment in .venv!
 environment when running the container.
 
 ## Configuration
-Configuration is done through command line arguments in the
-[entrypoint for running the Python application](https://github.com/max-pfeiffer/uvicorn-poetry/blob/main/build/scripts/start_uvicorn.sh).
-For everything else Uvicorn uses it's defaults.
+Configuration is done through command line options and arguments in the
+[Dockerfile](https://github.com/max-pfeiffer/uvicorn-poetry/blob/main/build/Dockerfile).
+For everything else Uvicorn uses its defaults.
 Since [Uvicorn v0.16.0](https://github.com/encode/uvicorn/releases/tag/0.16.0) you can configure Uvicorn via
 [environment variables](https://www.uvicorn.org/settings/) with the prefix `UVICORN_`.
 If you would like to do a deep dive on all the configuration options please see the
 [official Uvicorn documentation](https://www.uvicorn.org/settings/).
+
+### Important changes since V3.0.0
+1. Scripts for entrypoints are dropped and removed
+2. Application is run with an unprivileged user
 
 ### Important change since V2.0.0
 These custom environment variables are not supported anymore: 

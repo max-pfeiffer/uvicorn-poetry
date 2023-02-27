@@ -27,15 +27,14 @@ ENV PATH="$VIRTUAL_ENVIRONMENT_PATH/bin:$PATH"
 RUN groupadd -g 1001 python_application && \
     useradd -r -u 1001 -g python_application python_application
 
-# Set the WORKDIR to the application root. This needed for the entrypoints to
-# work. Also Uvicorn --reload feature relies by default on the current work dir.
+# Set the WORKDIR to the application root.
 # https://www.uvicorn.org/settings/#development
 # https://docs.docker.com/engine/reference/builder/#workdir
 WORKDIR ${PYTHONPATH}
 RUN chown python_application:python_application ${PYTHONPATH}
 
 # Create cache directory and set permissions because user 1001 has no home
-# directory and poetry cache directory.
+# and poetry cache directory.
 # https://python-poetry.org/docs/configuration/#cache-directory
 RUN mkdir ${POETRY_CACHE_DIR} && chown python_application:python_application ${POETRY_CACHE_DIR}
 

@@ -11,7 +11,6 @@ from build.constants import (
 from build.images import (
     UvicornPoetryImage,
     FastApiMultistageImage,
-    FastApiSinglestageImage,
 )
 from tests.utils import ImageTagComponents
 
