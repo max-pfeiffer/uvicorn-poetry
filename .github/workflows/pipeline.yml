@@ -88,4 +88,4 @@ jobs:
           DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
         run: |
           source .venv/bin/activate
-          python publish.py
+          python -m build.publish
