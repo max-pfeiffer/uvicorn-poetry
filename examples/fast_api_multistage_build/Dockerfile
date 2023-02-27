@@ -1,6 +1,6 @@
 # Be aware that you need to specify these arguments before the first FROM
 # see: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
-ARG BASE_IMAGE_NAME_AND_TAG=pfeiffermax/uvicorn-poetry:2.1.0-python3.9.14-slim-bullseye
+ARG BASE_IMAGE_NAME_AND_TAG=pfeiffermax/uvicorn-poetry:3.0.0-python3.10.9-slim-bullseye@sha256:cdd772b5e6e3f2feb8d38f3ca7af9b955c886a86a4aecec99bc43897edd8bcbe
 FROM ${BASE_IMAGE_NAME_AND_TAG} as dependencies-build-stage
 
 # install [tool.poetry.dependencies]
