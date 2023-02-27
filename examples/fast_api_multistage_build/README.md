@@ -14,7 +14,7 @@ upon that image.
 When running the project locally and not inside of a container please be aware that
 you don't need to run
 [pytest over the Pyton interpreter](https://docs.pytest.org/en/6.2.x/goodpractices.html#tests-outside-application-code).
-Instead you can just run pytest like that:
+Instead, you can just run pytest like that:
 ```shell
 pytest
 ```
