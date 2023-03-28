@@ -7,15 +7,16 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.9
       - name: Install Poetry
-        uses: abatilo/actions-poetry@v2.0.0
+        uses: snok/install-poetry@v1
         with:
-          poetry-version: 1.1.15
+          version: 1.4.1
+          virtualenvs-in-project: true
       - name: Install dependencies
         run: |
           poetry config virtualenvs.in-project true
@@ -34,17 +35,18 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.9
       - name: Install Poetry
-        uses: abatilo/actions-poetry@v2.0.0
+        uses: snok/install-poetry@v1
         with:
-          poetry-version: 1.1.11
+          version: 1.4.1
+          virtualenvs-in-project: true
       - name: Install dependencies
         run: |
           poetry config virtualenvs.in-project true
@@ -66,19 +68,20 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Get Git Commit Tag Name
         uses: olegtarasov/get-tag@v2.1
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.9
       - name: Install Poetry
-        uses: abatilo/actions-poetry@v2.0.0
+        uses: snok/install-poetry@v1
         with:
-          poetry-version: 1.1.11
+          version: 1.4.1
+          virtualenvs-in-project: true
       - name: Install dependencies
         run: |
           poetry config virtualenvs.in-project true
