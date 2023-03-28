@@ -82,8 +82,7 @@ class FastApiMultistageImage(DockerImage):
         self.image_tag = f"{self.version_tag}-{target_architecture}"
 
         buildargs: dict[str, str] = {
-            "BASE_IMAGE_NAME_AND_TAG": base_image_tag,
-            "APPLICATION_SERVER_PORT": APPLICATION_SERVER_PORT,
+            "BASE_IMAGE": base_image_tag,
         }
         image: Image = self.docker_client.images.build(
             path=str(self.absolute_docker_image_directory_path),
