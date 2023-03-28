@@ -1,5 +1,3 @@
-UVICORN_POETRY_IMAGE_NAME: str = "pfeiffermax/uvicorn-poetry"
-FAST_API_MULTISTAGE_IMAGE_NAME: str = "fast-api-multistage-build"
 TARGET_ARCHITECTURES: list[str] = [
     "python3.9.16-bullseye",
     "python3.9.16-slim-bullseye",
