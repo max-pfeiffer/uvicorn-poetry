@@ -16,16 +16,3 @@ COPY --chown=python_application:python_application --from=dependencies-build-sta
 
 # Copy application files
 COPY --chown=python_application:python_application /app /application_root/app/
-
-FROM ${BASE_IMAGE} as production-image-json-logging
-ENV UVICORN_LOG_CONFIG=/application_server/logging_configuration_file.yaml \
-    UVICORN_LOG_LEVEL=trace
-
-# Copy virtual environment
-COPY --chown=python_application:python_application --from=dependencies-build-stage /application_root/.venv /application_root/.venv
-
-# Adding log configuration for Uvicorn
-COPY --chown=python_application:python_application /application_server/logging_configuration_file.yaml /application_server/logging_configuration_file.yaml
-
-# Copy application files
-COPY --chown=python_application:python_application /app /application_root/app/
