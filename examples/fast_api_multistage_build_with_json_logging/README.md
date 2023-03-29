@@ -1,4 +1,4 @@
-# fast-api-multistage-build
+# fast-api-multistage-build-with-json-logging
 This is an example project to demonstrate the use of the uvicorn-poetry image.
 It is also used for testing that image.
 
@@ -11,7 +11,7 @@ In uvicorn-poetry container's Dockerfile PYTHONPATH is set, so this is cared for
 upon that image.
 
 ## Tests
-When running the project locally and not inside of a container please be aware that
+When running the project locally and not inside a container please be aware that
 you don't need to run
 [pytest over the Pyton interpreter](https://docs.pytest.org/en/6.2.x/goodpractices.html#tests-outside-application-code).
 Instead, you can just run pytest like that:

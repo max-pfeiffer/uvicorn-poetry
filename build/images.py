@@ -85,3 +85,17 @@ class FastApiMultistageImage(ExampleApplicationImage):
             / "examples"
             / "fast_api_multistage_build"
         )
+
+
+class FastApiMultistageJsonLoggingImage(ExampleApplicationImage):
+    def __init__(self, docker_client: docker.client):
+        super().__init__(docker_client)
+        # An image name is made up of slash-separated name components,
+        # optionally prefixed by a registry hostname.
+        # see: https://docs.docker.com/engine/reference/commandline/tag/
+        self.image_name: str = "fast-api-multistage-build-with-json-logging"
+        self.dockerfile_directory: Path = (
+            Path(__file__).parent.parent.resolve()
+            / "examples"
+            / "fast_api_multistage_build_with_json_logging"
+        )

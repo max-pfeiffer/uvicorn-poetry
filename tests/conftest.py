@@ -11,6 +11,7 @@ from build.constants import (
 from build.images import (
     UvicornPoetryImage,
     FastApiMultistageImage,
+    FastApiMultistageJsonLoggingImage,
 )
 from tests.utils import ImageTagComponents
 
@@ -42,9 +43,7 @@ def uvicorn_poetry_image(docker_client, version, request) -> str:
 
 
 @pytest.fixture(scope="session")
-def fast_api_multistage_production_image(
-    docker_client, uvicorn_poetry_image
-) -> str:
+def fast_api_multistage_image(docker_client, uvicorn_poetry_image) -> str:
     components: ImageTagComponents = ImageTagComponents.create_from_tag(
         uvicorn_poetry_image
     )
@@ -64,17 +63,17 @@ def fast_api_multistage_production_image(
 
 
 @pytest.fixture(scope="session")
-def fast_api_multistage_production_image_json_logging(
+def fast_api_multistage_with_json_logging_image(
     docker_client, uvicorn_poetry_image
 ) -> str:
     components: ImageTagComponents = ImageTagComponents.create_from_tag(
         uvicorn_poetry_image
     )
 
-    target: str = "production-image-json-logging"
+    target: str = "production-image-with-json-logging"
     image_version = f"{components.version}-{target}"
 
-    image: Image = FastApiMultistageImage(docker_client).build(
+    image: Image = FastApiMultistageJsonLoggingImage(docker_client).build(
         components.target_architecture,
         target,
         image_version,

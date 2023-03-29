@@ -9,15 +9,7 @@ FROM ${BASE_IMAGE} as dependencies-build-stage
 COPY ./poetry.lock ./pyproject.toml /application_root/
 RUN poetry install --no-interaction --no-root --without dev
 
-FROM ${BASE_IMAGE} as production-image
-
-# Copy virtual environment
-COPY --chown=python_application:python_application --from=dependencies-build-stage /application_root/.venv /application_root/.venv
-
-# Copy application files
-COPY --chown=python_application:python_application /app /application_root/app/
-
-FROM ${BASE_IMAGE} as production-image-json-logging
+FROM ${BASE_IMAGE} as production-image-with-json-logging
 ENV UVICORN_LOG_CONFIG=/application_server/logging_configuration_file.yaml \
     UVICORN_LOG_LEVEL=trace
 
