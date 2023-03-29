@@ -11,19 +11,23 @@ from build.constants import (
 
 
 class DockerImage:
-    dockerfile_name: str = "Dockerfile"
-
     def __init__(self, docker_client: docker.client):
         self.docker_client: docker.client = docker_client
+        self.dockerfile_name: str = "Dockerfile"
+        self.dockerfile_directory: Optional[Path] = None
+        self.image_name: Optional[str] = None
         self.image_tag: Optional[str] = None
         self.version_tag: Optional[str] = None
 
 
 class UvicornPoetryImage(DockerImage):
-    # An image name is made up of slash-separated name components, optionally prefixed by a registry hostname.
-    # see: https://docs.docker.com/engine/reference/commandline/tag/
-    image_name: str = "pfeiffermax/uvicorn-poetry"
-    dockerfile_directory: Path = Path(__file__).parent.resolve()
+    def __init__(self, docker_client: docker.client):
+        super().__init__(docker_client)
+        # An image name is made up of slash-separated name components,
+        # optionally prefixed by a registry hostname.
+        # see: https://docs.docker.com/engine/reference/commandline/tag/
+        self.image_name: str = "pfeiffermax/uvicorn-poetry"
+        self.dockerfile_directory: Path = Path(__file__).parent.resolve()
 
     def build(self, target_architecture: str, version: str = None) -> Image:
         self.version_tag = version
@@ -45,16 +49,7 @@ class UvicornPoetryImage(DockerImage):
         return image
 
 
-class FastApiMultistageImage(DockerImage):
-    # An image name is made up of slash-separated name components, optionally prefixed by a registry hostname.
-    # see: https://docs.docker.com/engine/reference/commandline/tag/
-    image_name: str = "fast-api-multistage-build"
-    dockerfile_directory: Path = (
-        Path(__file__).parent.parent.resolve()
-        / "examples"
-        / "fast_api_multistage_build"
-    )
-
+class ExampleApplicationImage(DockerImage):
     def build(
         self,
         target_architecture: str,
@@ -76,3 +71,17 @@ class FastApiMultistageImage(DockerImage):
             buildargs=buildargs,
         )[0]
         return image
+
+
+class FastApiMultistageImage(ExampleApplicationImage):
+    def __init__(self, docker_client: docker.client):
+        super().__init__(docker_client)
+        # An image name is made up of slash-separated name components,
+        # optionally prefixed by a registry hostname.
+        # see: https://docs.docker.com/engine/reference/commandline/tag/
+        self.image_name: str = "fast-api-multistage-build"
+        self.dockerfile_directory: Path = (
+            Path(__file__).parent.parent.resolve()
+            / "examples"
+            / "fast_api_multistage_build"
+        )
