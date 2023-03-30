@@ -34,11 +34,11 @@ def verify_container_config(
 )
 def test_multistage_image(
     docker_client,
-    fast_api_multistage_production_image,
+    fast_api_multistage_image,
     cleaned_up_test_container,
 ) -> None:
     test_container: Container = docker_client.containers.run(
-        fast_api_multistage_production_image,
+        fast_api_multistage_image,
         name=cleaned_up_test_container,
         ports={APPLICATION_SERVER_PORT: EXPOSED_CONTAINER_PORT},
         detach=True,
@@ -57,11 +57,11 @@ def test_multistage_image(
 
 
 def test_exposed_application_server_port(
-    fast_api_multistage_production_image,
+    fast_api_multistage_image,
 ) -> None:
     api_client = APIClient()
     inspection_result: dict = api_client.inspect_image(
-        fast_api_multistage_production_image
+        fast_api_multistage_image
     )
     exposed_ports: dict = inspection_result["ContainerConfig"]["ExposedPorts"]
     assert f"{APPLICATION_SERVER_PORT}/tcp" in exposed_ports.keys()

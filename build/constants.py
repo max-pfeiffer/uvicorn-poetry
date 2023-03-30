@@ -1,30 +1,28 @@
-UVICORN_POETRY_IMAGE_NAME: str = "pfeiffermax/uvicorn-poetry"
-FAST_API_MULTISTAGE_IMAGE_NAME: str = "fast-api-multistage-build"
 TARGET_ARCHITECTURES: list[str] = [
     "python3.9.16-bullseye",
     "python3.9.16-slim-bullseye",
-    "python3.10.9-bullseye",
-    "python3.10.9-slim-bullseye",
+    "python3.10.10-bullseye",
+    "python3.10.10-slim-bullseye",
 ]
 BASE_IMAGES: dict = {
     TARGET_ARCHITECTURES[
         0
-    ]: "pfeiffermax/python-poetry:1.1.0-poetry1.3.2-python3.9.16-bullseye@sha256:3795ff170e143a5dfa960a81356e4cb3406ed6a7a3ccea0156c14e5cf4a67053",
+    ]: "pfeiffermax/python-poetry:1.2.0-poetry1.4.1-python3.9.16-bullseye@sha256:54037cfdca026b17e7a57664dff47bf04e7849074d3ab62271ecad0446ef0322",
     TARGET_ARCHITECTURES[
         1
-    ]: "pfeiffermax/python-poetry:1.1.0-poetry1.3.2-python3.9.16-slim-bullseye@sha256:c6f545f175e7369017ae8d39e54497cb423ff8291d1a492b086dcd1a7439f9b0",
+    ]: "pfeiffermax/python-poetry:1.2.0-poetry1.4.1-python3.9.16-slim-bullseye@sha256:c0b8d9c28c5717074c481dfdf1d8bd3aaa0b83a5e2a9e37c77be7af19d70d0ce",
     TARGET_ARCHITECTURES[
         2
-    ]: "pfeiffermax/python-poetry:1.1.0-poetry1.3.2-python3.10.9-bullseye@sha256:c269b0872f11fd198703e9dea301a4cb3dd1bbd7e054ab723d801dccc0b631cd",
+    ]: "pfeiffermax/python-poetry:1.2.0-poetry1.4.1-python3.10.10-bullseye@sha256:5a81c8c86132e504db2b7329f5e41cd32bddebf811d83a0d356edbca0d81135c",
     TARGET_ARCHITECTURES[
         3
-    ]: "pfeiffermax/python-poetry:1.1.0-poetry1.3.2-python3.10.9-slim-bullseye@sha256:ee99ee20733201523728147ab0c9117d22266994a1919ec0d64937133a51f07d",
+    ]: "pfeiffermax/python-poetry:1.2.0-poetry1.4.1-python3.10.10-slim-bullseye@sha256:289c6beb568991811629c91cdcb3841ceb95bf0a017c3e411f4b71e18043ef15",
 }
 PYTHON_VERSIONS: dict = {
     TARGET_ARCHITECTURES[0]: "3.9.16",
     TARGET_ARCHITECTURES[1]: "3.9.16",
-    TARGET_ARCHITECTURES[2]: "3.10.9",
-    TARGET_ARCHITECTURES[3]: "3.10.9",
+    TARGET_ARCHITECTURES[2]: "3.10.10",
+    TARGET_ARCHITECTURES[3]: "3.10.10",
 }
 
 # As we are running the server with an unprivileged user, we need to use

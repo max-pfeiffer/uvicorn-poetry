@@ -9,10 +9,15 @@ FROM ${BASE_IMAGE} as dependencies-build-stage
 COPY ./poetry.lock ./pyproject.toml /application_root/
 RUN poetry install --no-interaction --no-root --without dev
 
-FROM ${BASE_IMAGE} as production-image
+FROM ${BASE_IMAGE} as production-image-with-json-logging
+ENV UVICORN_LOG_CONFIG=/application_server/logging_configuration_file.yaml \
+    UVICORN_LOG_LEVEL=trace
 
 # Copy virtual environment
 COPY --chown=python_application:python_application --from=dependencies-build-stage /application_root/.venv /application_root/.venv
+
+# Adding log configuration for Uvicorn
+COPY --chown=python_application:python_application /application_server/logging_configuration_file.yaml /application_server/logging_configuration_file.yaml
 
 # Copy application files
 COPY --chown=python_application:python_application /app /application_root/app/

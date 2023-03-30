@@ -31,11 +31,11 @@ def verify_container_config(container: UvicornPoetryContainerConfig) -> None:
 )
 def test_json_logging(
     docker_client,
-    fast_api_multistage_production_image_json_logging,
+    fast_api_multistage_with_json_logging_image,
     cleaned_up_test_container,
 ) -> None:
     test_container: Container = docker_client.containers.run(
-        fast_api_multistage_production_image_json_logging,
+        fast_api_multistage_with_json_logging_image,
         name=cleaned_up_test_container,
         ports={APPLICATION_SERVER_PORT: EXPOSED_CONTAINER_PORT},
         detach=True,
