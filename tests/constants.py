@@ -18,3 +18,5 @@ JSON_LOGGING_CONFIG: dict[str, str] = {
     "port": APPLICATION_SERVER_PORT,
 }
 EXPOSED_CONTAINER_PORT: str = "80"
+REGISTRY_USERNAME: str = "foo"
+REGISTRY_PASSWORD: str = "bar"

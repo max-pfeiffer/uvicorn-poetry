@@ -1,5 +1,6 @@
 from pathlib import Path
 from tempfile import NamedTemporaryFile
+from typing import Optional
 
 import bcrypt
 from testcontainers.core.container import DockerContainer
@@ -17,12 +18,9 @@ class DockerRegistryContainer(DockerContainer):
         super().__init__(image=image)
         self.port_to_expose = port
         self.with_bind_ports(5000, port)
-        self.username = username
-        self.password = password
-        self.htpasswd_file = None
-
-    def get_registry(self) -> str:
-        return f"localhost:{self.port_to_expose}"
+        self.username: Optional[str] = username
+        self.password: Optional[str] = password
+        self.htpasswd_file: Optional[Path] = None
 
     def start(self):
         if self.username and self.password:
@@ -34,7 +32,7 @@ class DockerRegistryContainer(DockerContainer):
 
             with NamedTemporaryFile(delete=False) as file:
                 file.write(content.encode("utf-8"))
-                self.htpasswd_file: Path = Path(file.name)
+                self.htpasswd_file = Path(file.name)
 
                 host_dir: str = str(self.htpasswd_file.parent.resolve())
                 tmp_file: str = self.htpasswd_file.name
@@ -53,3 +51,6 @@ class DockerRegistryContainer(DockerContainer):
         # Remove the password file
         if self.htpasswd_file:
             self.htpasswd_file.unlink()
+
+    def get_registry(self) -> str:
+        return f"localhost:{self.port_to_expose}"
