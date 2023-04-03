@@ -2,6 +2,7 @@ from random import randrange
 
 import docker
 import pytest
+from click.testing import CliRunner
 from docker.models.images import Image
 from semver import VersionInfo
 
@@ -88,3 +89,9 @@ def cleaned_up_test_container(docker_client, request) -> None:
     test_container = docker_client.containers.get(test_container_name)
     test_container.stop()
     test_container.remove()
+
+
+@pytest.fixture(scope="function")
+def cli_runner() -> CliRunner:
+    runner = CliRunner()
+    return runner
