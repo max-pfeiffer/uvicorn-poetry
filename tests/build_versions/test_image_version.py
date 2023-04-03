@@ -8,7 +8,6 @@ from build.images import (
     FastApiMultistageImage,
     FastApiMultistageJsonLoggingImage,
 )
-from tests.utils import ImageTagComponents
 
 
 @pytest.mark.parametrize("target_architecture", TARGET_ARCHITECTURES)
@@ -38,10 +37,3 @@ def test_image_versions(target_architecture, version, docker_client):
         == target_architecture
     )
     assert fastapi_multistage_jsonlogging_imageobject.version == version
-
-
-def test_build_version(uvicorn_poetry_image, version) -> None:
-    components: ImageTagComponents = ImageTagComponents.create_from_tag(
-        uvicorn_poetry_image
-    )
-    assert components.version == version

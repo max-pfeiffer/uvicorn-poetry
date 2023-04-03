@@ -35,8 +35,8 @@ def uvicorn_poetry_image(docker_client, version, request) -> str:
     target_architecture: str = request.param
 
     uvicorn_gunicorn_poetry_image: Image = UvicornPoetryImage(
-        docker_client
-    ).build(target_architecture, version=version)
+        docker_client, target_architecture, version
+    ).build()
     image_tag: str = uvicorn_gunicorn_poetry_image.tags[0]
     yield image_tag
     docker_client.images.remove(image_tag, force=True)
@@ -49,14 +49,11 @@ def fast_api_multistage_image(docker_client, uvicorn_poetry_image) -> str:
     )
 
     target: str = "production-image"
-    image_version = f"{components.version}-{target}"
+    image_version: str = f"{components.version}-{target}"
 
-    image: Image = FastApiMultistageImage(docker_client).build(
-        components.target_architecture,
-        target,
-        image_version,
-        uvicorn_poetry_image,
-    )
+    image: Image = FastApiMultistageImage(
+        docker_client, components.target_architecture, image_version
+    ).build(target, uvicorn_poetry_image)
     image_tag: str = image.tags[0]
     yield image_tag
     docker_client.images.remove(image_tag, force=True)
@@ -71,12 +68,12 @@ def fast_api_multistage_with_json_logging_image(
     )
 
     target: str = "production-image-with-json-logging"
-    image_version = f"{components.version}-{target}"
+    image_version: str = f"{components.version}-{target}"
 
-    image: Image = FastApiMultistageJsonLoggingImage(docker_client).build(
-        components.target_architecture,
+    image: Image = FastApiMultistageJsonLoggingImage(
+        docker_client, components.target_architecture, image_version
+    ).build(
         target,
-        image_version,
         uvicorn_poetry_image,
     )
     image_tag: str = image.tags[0]

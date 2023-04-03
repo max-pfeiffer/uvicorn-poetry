@@ -20,7 +20,7 @@ def main() -> None:
 
     for target_architecture in TARGET_ARCHITECTURES:
         new_uvicorn_gunicorn_poetry_image: UvicornPoetryImage = (
-            UvicornPoetryImage(docker_client)
+            UvicornPoetryImage(docker_client, target_architecture, version_tag)
         )
 
         # Delete old existing images
@@ -30,9 +30,7 @@ def main() -> None:
             for tag in old_image.tags:
                 docker_client.images.remove(tag, force=True)
 
-        new_uvicorn_gunicorn_poetry_image.build(
-            target_architecture, version=version_tag
-        )
+        new_uvicorn_gunicorn_poetry_image.build()
 
         # https://docs.docker.com/engine/reference/commandline/push/
         # https://docs.docker.com/engine/reference/commandline/tag/
