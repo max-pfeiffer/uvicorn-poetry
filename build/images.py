@@ -23,7 +23,7 @@ class DockerImage:
         self.image_name: Optional[str] = None
         self.image_tag: Optional[str] = None
         self.version: Optional[str] = version
-        self.target_architecture = target_architecture
+        self.target_architecture: str = target_architecture
 
 
 class UvicornPoetryImage(DockerImage):
