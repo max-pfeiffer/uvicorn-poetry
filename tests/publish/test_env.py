@@ -9,7 +9,9 @@ from tests.registry_container import DockerRegistryContainer
 
 @pytest.mark.usefixtures("cleanup_images")
 def test_registry(cli_runner: CliRunner, version: str):
-    with DockerRegistryContainer() as docker_registry:
+    with DockerRegistryContainer().with_bind_ports(
+        5000, 5000
+    ) as docker_registry:
         result: Result = cli_runner.invoke(
             main,
             env={
@@ -24,7 +26,9 @@ def test_registry(cli_runner: CliRunner, version: str):
 def test_registry_with_unnecessary_credentials(
     cli_runner: CliRunner, version: str
 ):
-    with DockerRegistryContainer() as docker_registry:
+    with DockerRegistryContainer().with_bind_ports(
+        5000, 5000
+    ) as docker_registry:
         result: Result = cli_runner.invoke(
             main,
             env={
@@ -41,7 +45,7 @@ def test_registry_with_unnecessary_credentials(
 def test_registry_with_credentials(cli_runner: CliRunner, version: str):
     with DockerRegistryContainer(
         username=REGISTRY_USERNAME, password=REGISTRY_PASSWORD
-    ) as docker_registry:
+    ).with_bind_ports(5000, 5000) as docker_registry:
         result: Result = cli_runner.invoke(
             main,
             env={
@@ -58,7 +62,7 @@ def test_registry_with_credentials(cli_runner: CliRunner, version: str):
 def test_registry_with_wrong_credentials(cli_runner: CliRunner, version: str):
     with DockerRegistryContainer(
         username=REGISTRY_USERNAME, password=REGISTRY_PASSWORD
-    ) as docker_registry:
+    ).with_bind_ports(5000, 5000) as docker_registry:
         result: Result = cli_runner.invoke(
             main,
             env={

@@ -10,19 +10,21 @@ from testcontainers.core.container import DockerContainer
 class DockerRegistryContainer(DockerContainer):
     def __init__(
         self,
-        image="registry:latest",
+        image: str = "registry:latest",
         port: int = 5000,
         username: str = None,
         password: str = None,
+        **kwargs,
     ) -> None:
-        super().__init__(image=image)
+        super().__init__(image=image, **kwargs)
         self.port_to_expose = port
-        self.with_bind_ports(5000, port)
         self.username: Optional[str] = username
         self.password: Optional[str] = password
         self.htpasswd_file: Optional[Path] = None
+        self.with_exposed_ports(self.port_to_expose)
 
     def start(self):
+        # Create the password file
         if self.username and self.password:
             hashed_password: str = bcrypt.hashpw(
                 self.password.encode("utf-8"),
@@ -46,11 +48,13 @@ class DockerRegistryContainer(DockerContainer):
         super().start()
         return self
 
-    def stop(self, force=True, delete_volume=True):
-        super().stop(force=force, delete_volume=delete_volume)
+    def stop(self, **kwargs):
+        super().stop(**kwargs)
         # Remove the password file
         if self.htpasswd_file:
             self.htpasswd_file.unlink()
 
     def get_registry(self) -> str:
-        return f"localhost:{self.port_to_expose}"
+        host = self.get_container_host_ip()
+        port = self.get_exposed_port(self.port_to_expose)
+        return f"{host}:{port}"
