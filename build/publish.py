@@ -1,6 +1,6 @@
 import click
 import docker
-
+from docker.client import DockerClient
 from build.constants import (
     TARGET_ARCHITECTURES,
 )
@@ -28,7 +28,7 @@ def main(
     version_tag: str,
     registry: str,
 ) -> None:
-    docker_client: docker.client = docker.from_env()
+    docker_client: DockerClient = docker.from_env()
 
     for target_architecture in TARGET_ARCHITECTURES:
         new_uvicorn_gunicorn_poetry_image: UvicornPoetryImage = (

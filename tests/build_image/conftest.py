@@ -1,21 +1,15 @@
-from random import randrange
-
-import docker
 import pytest
+from docker.client import DockerClient
 from docker.models.images import Image
 from semver import VersionInfo
 
-from build.constants import (
-    TARGET_ARCHITECTURES,
-)
+from build.constants import TARGET_ARCHITECTURES
 from build.images import (
-    UvicornPoetryImage,
     FastApiMultistageImage,
     FastApiMultistageJsonLoggingImage,
+    UvicornPoetryImage,
 )
 from tests.utils import ImageTagComponents
-
-from docker.client import DockerClient
 
 
 @pytest.fixture(scope="package", params=TARGET_ARCHITECTURES)
