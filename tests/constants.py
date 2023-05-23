@@ -1,6 +1,6 @@
 from build.constants import APPLICATION_SERVER_PORT
 
-SLEEP_TIME: float = 3.0
+SLEEP_TIME: float = 4.0
 HELLO_WORLD: str = "Hello World!"
 DEFAULT_UVICORN_CONFIG: dict[str, str] = {
     "workers": "1",

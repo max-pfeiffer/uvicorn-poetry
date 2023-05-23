@@ -8,7 +8,7 @@ from semver import VersionInfo
 
 @pytest.fixture(scope="session")
 def docker_client() -> DockerClient:
-    return docker.client.from_env()
+    return docker.from_env()
 
 
 @pytest.fixture(scope="session")
