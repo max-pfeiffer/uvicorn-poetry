@@ -17,7 +17,7 @@ coverage = "7.2.7"
 requests = "2.31.0"
 black = "23.3.0"
 pre-commit = "3.3.2"
-semver = "3.0.0"
+semver = "3.0.1"
 pylint = "2.17.4"
 testcontainers = "3.7.1"
 
