@@ -18,7 +18,7 @@ requests = "2.31.0"
 black = "23.9.1"
 pre-commit = "3.4.0"
 semver = "3.0.1"
-pylint = "3.0.0"
+pylint = "3.0.2"
 testcontainers = "3.7.1"
 
 # https://docs.pytest.org/en/latest/reference/customize.html
