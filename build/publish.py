@@ -1,10 +1,13 @@
 import click
-import docker
-from docker.client import DockerClient
-from build.constants import (
-    TARGET_ARCHITECTURES,
+from build.constants import PLATFORMS, APPLICATION_SERVER_PORT
+from build.utils import (
+    get_context,
+    get_image_reference,
+    get_python_poetry_image_reference,
 )
-from build.images import UvicornPoetryImage
+from pathlib import Path
+from python_on_whales import DockerClient, Builder
+from os import getenv
 
 
 @click.command()
@@ -19,59 +22,75 @@ from build.images import UvicornPoetryImage
     help="Docker Hub password",
 )
 @click.option(
-    "--version-tag", envvar="GIT_TAG_NAME", required=True, help="Version Tag"
+    "--version-tag", envvar="GIT_TAG_NAME", required=True, help="Version tag"
+)
+@click.option(
+    "--python-version",
+    envvar="PYTHON_VERSION",
+    required=True,
+    help="Python version",
+)
+@click.option(
+    "--os-variant",
+    envvar="OS_VARIANT",
+    required=True,
+    help="Operating system variant",
 )
 @click.option("--registry", envvar="REGISTRY", help="Docker registry")
 def main(
     docker_hub_username: str,
     docker_hub_password: str,
     version_tag: str,
+    python_version: str,
+    os_variant: str,
     registry: str,
 ) -> None:
-    docker_client: DockerClient = docker.from_env()
+    github_ref_name: str = getenv("GITHUB_REF_NAME")
+    context: Path = get_context()
+    image_reference: str = get_image_reference(
+        registry, version_tag, python_version, os_variant
+    )
+    cache_scope: str = f"{python_version}-{os_variant}"
 
-    for target_architecture in TARGET_ARCHITECTURES:
-        new_uvicorn_gunicorn_poetry_image: UvicornPoetryImage = (
-            UvicornPoetryImage(docker_client, target_architecture, version_tag)
+    if github_ref_name:
+        cache_to: str = (
+            f"type=gha,mode=max,scope={github_ref_name}-{cache_scope}"
         )
+        cache_from: str = f"type=gha,scope={github_ref_name}-{cache_scope}"
+    else:
+        cache_to = f"type=local,mode=max,dest=/tmp,scope={cache_scope}"
+        cache_from = f"type=local,src=/tmp,scope={cache_scope}"
 
-        # Delete old existing images
-        for old_image in docker_client.images.list(
-            new_uvicorn_gunicorn_poetry_image.image_name
-        ):
-            for tag in old_image.tags:
-                docker_client.images.remove(tag, force=True)
+    docker_client: DockerClient = DockerClient()
+    builder: Builder = docker_client.buildx.create(
+        driver="docker-container", driver_options=dict(network="host")
+    )
 
-        new_uvicorn_gunicorn_poetry_image.build()
+    docker_client.login(
+        server=registry,
+        username=docker_hub_username,
+        password=docker_hub_password,
+    )
 
-        # https://docs.docker.com/engine/reference/commandline/push/
-        # https://docs.docker.com/engine/reference/commandline/tag/
-        # https://docs.docker.com/engine/reference/commandline/image_tag/
-        if docker_hub_username and docker_hub_password:
-            login_kwargs: dict = {
-                "username": docker_hub_username,
-                "password": docker_hub_password,
-            }
-            if registry:
-                login_kwargs["registry"] = registry
+    docker_client.buildx.build(
+        context_path=context,
+        build_args={
+            "BASE_IMAGE": get_python_poetry_image_reference(
+                python_version, os_variant
+            ),
+            "APPLICATION_SERVER_PORT": APPLICATION_SERVER_PORT,
+        },
+        tags=image_reference,
+        platforms=PLATFORMS,
+        builder=builder,
+        cache_to=cache_to,
+        cache_from=cache_from,
+        push=True,
+    )
 
-            docker_client.login(**login_kwargs)
-
-        if registry:
-            repository: str = (
-                f"{registry}/{new_uvicorn_gunicorn_poetry_image.image_name}"
-            )
-        else:
-            repository: str = new_uvicorn_gunicorn_poetry_image.image_name
-
-        for line in docker_client.images.push(
-            repository,
-            tag=new_uvicorn_gunicorn_poetry_image.image_tag,
-            stream=True,
-            decode=True,
-        ):
-            print(line)
-    docker_client.close()
+    # Cleanup
+    docker_client.buildx.stop(builder)
+    docker_client.buildx.remove(builder)
 
 
 if __name__ == "__main__":

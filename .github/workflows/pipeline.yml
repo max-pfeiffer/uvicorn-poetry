@@ -7,15 +7,15 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: 3.11
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
-          version: 1.4.1
+          version: 1.7.1
           virtualenvs-in-project: true
       - name: Load cached venv
         id: cached-poetry-dependencies
@@ -27,54 +27,131 @@ jobs:
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: |
           poetry install --no-interaction --no-root
-      - name: pylint
+      - name: Run pylint and black
         run: |
           source .venv/bin/activate
           pylint build tests
-      - name: black
-        run: |
-          source .venv/bin/activate
           black --check .
 
-  run-tests:
+  run-build-image-tests:
     needs: code-quality
     runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python_version: ["3.10.13", "3.11.6", "3.12.0"]
+        os_variant: ["bookworm", "slim-bookworm"]
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: actions/checkout@v4
+      - name: Expose GitHub Runtime
+        uses: crazy-max/ghaction-github-runtime@v3          
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: 3.11
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
-          version: 1.4.1
+          version: 1.7.1
           virtualenvs-in-project: true
       - name: Load cached venv
         id: cached-poetry-dependencies
         uses: actions/cache@v3
         with:
           path: .venv
-          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}            
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: |
           poetry install --no-interaction --no-root
-      - name: Run all tests with pytest
+      - name: Run tests for image builds with pytest
+        env:
+          PYTHON_VERSION: ${{ matrix.python_version }}
+          OS_VARIANT: ${{ matrix.os_variant }}
+          POETRY_VERSION: ${{ matrix.poetry_version }}
         run: |
           source .venv/bin/activate
-          pytest --cov
+          pytest tests/build_image --cov --cov-report=xml:build_image_coverage_report.xml
+      - name: Upload coverage report to artifactory
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-image-coverage-report-${{ matrix.python_version }}-${{ matrix.os_variant }}-${{ matrix.poetry_version }}
+          path: build_image_coverage_report.xml
+          if-no-files-found: error
+          retention-days: 1          
+
+  run-publish-image-tests:
+      needs: code-quality
+      runs-on: ubuntu-20.04
+      strategy:
+        fail-fast: false
+        matrix:
+          python_version: ["3.10.13", "3.11.6", "3.12.0"]
+          os_variant: ["bookworm", "slim-bookworm"]
+      steps:
+        - name: Checkout Repository
+          uses: actions/checkout@v4
+        - name: Expose GitHub Runtime
+          uses: crazy-max/ghaction-github-runtime@v3          
+        - name: Setup Python
+          uses: actions/setup-python@v4
+          with:
+            python-version: 3.11
+        - name: Install Poetry
+          uses: snok/install-poetry@v1
+          with:
+            version: 1.7.1
+            virtualenvs-in-project: true
+        - name: Load cached venv
+          id: cached-poetry-dependencies
+          uses: actions/cache@v3
+          with:
+            path: .venv
+            key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}            
+        - name: Install dependencies
+          if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+          run: |
+            poetry install --no-interaction --no-root
+        - name: Run tests for image publishing with pytest
+          env:
+            PYTHON_VERSION: ${{ matrix.python_version }}
+            OS_VARIANT: ${{ matrix.os_variant }}
+            POETRY_VERSION: ${{ matrix.poetry_version }}
+          run: |
+            source .venv/bin/activate
+            pytest tests/publish_image --cov --cov-report=xml:publish_image_coverage_report.xml
+        - name: Upload coverage report to artifactory
+          uses: actions/upload-artifact@v3
+          with:
+            name: publish-image-coverage-report-${{ matrix.python_version }}-${{ matrix.os_variant }}-${{ matrix.poetry_version }}
+            path: publish_image_coverage_report.xml
+            if-no-files-found: error
+            retention-days: 1
+          
+  upload-test-coverage-reports:
+    needs:
+      - run-build-image-tests
+      - run-publish-image-tests
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Download coverage reports from artifactory
+        uses: actions/download-artifact@v3
+      - name: Compile the relevant reports
+        run: |
+          find . -name "*.xml" -exec cp {} . \;
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
+          files: ./build_image_coverage_report.xml,./publish_image_coverage_report.xml
           fail_ci_if_error: true
           token: ${{ secrets.CODECOV_TOKEN }}
-
+        
   publish-all-images:
-    needs: run-tests
+    needs:
+      - upload-test-coverage-reports      
     if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-20.04
     steps:
@@ -87,11 +164,11 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: 3.11
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
-          version: 1.4.1
+          version: 1.7.1
           virtualenvs-in-project: true
       - name: Load cached venv
         id: cached-poetry-dependencies

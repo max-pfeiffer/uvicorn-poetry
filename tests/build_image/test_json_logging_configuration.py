@@ -14,12 +14,12 @@ from tests.constants import (
 from tests.utils import UvicornPoetryContainerConfig
 
 
-def test_fast_api_multistage_image(
+def test_fast_api_multistage_with_json_logging_image(
     docker_client: DockerClient,
-    fast_api_multistage_image_reference: str,
+    fast_api_multistage_with_json_logging_image_reference: str,
 ) -> None:
     with docker_client.container.run(
-        fast_api_multistage_image_reference,
+        fast_api_multistage_with_json_logging_image_reference,
         detach=True,
         publish=[(EXPOSED_CONTAINER_PORT, APPLICATION_SERVER_PORT)],
     ) as container:
@@ -44,3 +44,8 @@ def test_fast_api_multistage_image(
         assert config_data["workers"] == DEFAULT_UVICORN_CONFIG["workers"]
         assert config_data["host"] == DEFAULT_UVICORN_CONFIG["host"]
         assert config_data["port"] == DEFAULT_UVICORN_CONFIG["port"]
+
+        logs: str = container.logs()
+        lines: list[str] = logs.splitlines()
+        log_statement: dict = json.loads(lines[1])
+        assert log_statement["levelname"] == "INFO"

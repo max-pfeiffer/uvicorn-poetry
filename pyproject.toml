@@ -6,20 +6,24 @@ authors = ["Max Pfeiffer <max@maxpfeiffer.ch>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "3.9.*"
+python = "3.11.*"
 click = "8.1.7"
-docker = "6.1.3"
+python-on-whales = "0.68.0"
 
 [tool.poetry.dev-dependencies]
-pytest = "7.4.2"
+pytest = "7.4.3"
 pytest-cov = "4.1.0"
-coverage = "7.3.1"
+pytest-dotenv = "0.5.2"
+coverage = "7.3.3"
 requests = "2.31.0"
-black = "23.9.1"
-pre-commit = "3.4.0"
-semver = "3.0.1"
-pylint = "3.0.2"
+black = "23.12.0"
+pre-commit = "3.6.0"
+semver = "3.0.2"
+pylint = "3.0.3"
 testcontainers = "3.7.1"
+bcrypt = "4.1.2"
+docker-image-py = "0.1.12"
+furl = "2.1.3"
 
 # https://docs.pytest.org/en/latest/reference/customize.html
 
