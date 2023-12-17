@@ -6,7 +6,7 @@ authors = ["Max Pfeiffer <max@maxpfeiffer.ch>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "3.9.*"
+python = "3.11.*"
 click = "8.1.7"
 python-on-whales = "0.65.0"
 
