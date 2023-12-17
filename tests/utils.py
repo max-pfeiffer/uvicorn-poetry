@@ -1,10 +1,10 @@
 from dataclasses import dataclass
+from pathlib import Path
 
 import docker
-from docker.models.containers import Container
 from docker.client import DockerClient
+from docker.models.containers import Container
 from docker_image import reference
-from pathlib import Path
 
 
 class UvicornPoetryContainerConfig:
