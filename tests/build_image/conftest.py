@@ -1,5 +1,4 @@
 from os import getenv
-from time import sleep
 
 import pytest
 from python_on_whales import Builder, DockerClient
@@ -14,16 +13,6 @@ from tests.utils import (
     get_fast_api_multistage_with_json_logging_context,
     get_fast_api_multistage_with_json_logging_image_reference,
 )
-
-
-@pytest.fixture(scope="session")
-def python_version() -> str:
-    return getenv("PYTHON_VERSION")
-
-
-@pytest.fixture(scope="session")
-def os_variant() -> str:
-    return getenv("OS_VARIANT")
 
 
 @pytest.fixture(scope="session")

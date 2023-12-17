@@ -1,5 +1,5 @@
 from random import randrange
-
+from os import getenv
 import pytest
 from python_on_whales import Builder, DockerClient
 from semver import VersionInfo
@@ -27,3 +27,13 @@ def image_version() -> str:
     )
     version_string: str = str(version)
     return version_string
+
+
+@pytest.fixture(scope="session")
+def python_version() -> str:
+    return getenv("PYTHON_VERSION")
+
+
+@pytest.fixture(scope="session")
+def os_variant() -> str:
+    return getenv("OS_VARIANT")
