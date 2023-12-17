@@ -36,7 +36,9 @@ from os import getenv
     required=True,
     help="Operating system variant",
 )
-@click.option("--registry", envvar="REGISTRY", help="Docker registry")
+@click.option(
+    "--registry", envvar="REGISTRY", default="docker.io", help="Docker registry"
+)
 def main(
     docker_hub_username: str,
     docker_hub_password: str,

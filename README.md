@@ -20,16 +20,19 @@ Any feedback is highly appreciated and will be considered.
 **GitHub Repository:** [https://github.com/max-pfeiffer/uvicorn-poetry](https://github.com/max-pfeiffer/uvicorn-poetry)
 
 ## Docker Image Features
-1. Supported CPU architectures:    
-   1. linux/amd64
-   2. linux/arm64/v8
-2. Python versions:
+1. Poetry v1.7.1 is available as Python package dependency management tool
+2. A virtual environment for the application and application server
+3. The application is run with [Uvicorn](https://www.uvicorn.org) as application server
+4. Python versions:
     1. 3.10
     2. 3.11
     3. 3.12
-3. Poetry v1.7.1 is available as Python package dependency management tool
-4. A virtual environment for the application and application server
-5. The application is run with [Uvicorn](https://www.uvicorn.org) as application server
+5. Operating system variants:
+    1. [Debian Bookworm v12.1](https://www.debian.org/releases/bookworm/)
+    2. [Debian Bookworm slim v12.1](https://www.debian.org/releases/bookworm/)
+6. Supported CPU architectures:    
+   1. linux/amd64
+   2. linux/arm64/v8
 
 ## Usage
 You can use the [uvicorn-poetry-fastapi-project-template](https://github.com/max-pfeiffer/uvicorn-poetry-fastapi-project-template) for your convenience.
