@@ -4,7 +4,11 @@ import pytest
 from python_on_whales import Builder, DockerClient
 
 from build.constants import PLATFORMS, APPLICATION_SERVER_PORT
-from build.utils import get_image_reference, get_context
+from build.utils import (
+    get_image_reference,
+    get_context,
+    get_python_poetry_image_reference,
+)
 from tests.constants import REGISTRY_PASSWORD, REGISTRY_USERNAME
 from tests.registry_container import DockerRegistryContainer
 from tests.utils import (
@@ -68,7 +72,9 @@ def base_image_reference(
     docker_client.buildx.build(
         context_path=get_context(),
         build_args={
-            "BASE_IMAGE": f"pfeiffermax/python-poetry:1.8.0-poetry1.7.1-python{python_version}-{os_variant}",
+            "BASE_IMAGE": get_python_poetry_image_reference(
+                python_version, os_variant
+            ),
             "APPLICATION_SERVER_PORT": APPLICATION_SERVER_PORT,
         },
         tags=image_reference,

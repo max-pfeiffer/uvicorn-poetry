@@ -1,6 +1,10 @@
 import click
 from build.constants import PLATFORMS, APPLICATION_SERVER_PORT
-from build.utils import get_context, get_image_reference
+from build.utils import (
+    get_context,
+    get_image_reference,
+    get_python_poetry_image_reference,
+)
 from pathlib import Path
 from python_on_whales import DockerClient, Builder
 from os import getenv
@@ -71,7 +75,9 @@ def main(
     docker_client.buildx.build(
         context_path=context,
         build_args={
-            "BASE_IMAGE": f"pfeiffermax/python-poetry:1.8.0-poetry1.7.1-python{python_version}-{os_variant}",
+            "BASE_IMAGE": get_python_poetry_image_reference(
+                python_version, os_variant
+            ),
             "APPLICATION_SERVER_PORT": APPLICATION_SERVER_PORT,
         },
         tags=image_reference,
