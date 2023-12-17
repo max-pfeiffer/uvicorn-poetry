@@ -1,11 +1,17 @@
 from dataclasses import dataclass
 
+import docker
 from docker.models.containers import Container
+from docker.client import DockerClient
+from docker_image import reference
+from pathlib import Path
 
 
 class UvicornPoetryContainerConfig:
-    def __init__(self, container: Container):
-        self.container: Container = container
+    def __init__(self, container_id: str):
+        self.container: Container = docker.from_env().containers.get(
+            container_id
+        )
 
     def get_uvicorn_processes(self) -> list[str]:
         top = self.container.top()
@@ -56,34 +62,67 @@ class UvicornPoetryContainerConfig:
 
 @dataclass
 class ImageTagComponents:
+    registry: str
     image_name: str
+    tag: str
     version: str
-    target_architecture: str
+    python_version: str
+    os_variant: str
 
     @classmethod
-    def create_from_tag(cls, tag: str):
-        tag_parts: list[str] = tag.split(":")
-        image_name: str = tag_parts[0]
-        image_tag: str = tag_parts[1]
+    def create_from_reference(cls, tag: str):
+        ref = reference.Reference.parse(tag)
+        registry: str = ref.repository["domain"]
+        image_name: str = ref.repository["path"]
+        tag: str = ref["tag"]
 
-        image_tag_parts: list[str] = image_tag.split("-")
-        target_architecture_index = [
-            index
-            for index, tag_part in enumerate(image_tag_parts)
-            if tag_part.startswith("python")
-        ][0]
-
-        version: str = "-".join(image_tag_parts[:target_architecture_index])
-        target_architecture: str = "-".join(
-            image_tag_parts[target_architecture_index:]
-        )
+        tag_parts: list[str] = tag.split("-")
+        version: str = tag_parts[0]
+        python_version: str = tag_parts[1].lstrip("python")
+        os_variant: str = f"{tag_parts[-2]}-{tag_parts[-1]}"
         return cls(
+            registry=registry,
             image_name=image_name,
+            tag=tag,
             version=version,
-            target_architecture=target_architecture,
+            python_version=python_version,
+            os_variant=os_variant,
         )
 
 
-def create_version_tag_for_example_images(version: str, target: str) -> str:
-    version_tag: str = f"{version}-{target}"
-    return version_tag
+def get_fast_api_multistage_context() -> Path:
+    context: Path = (
+        Path(__file__).parent.parent.resolve()
+        / "examples"
+        / "fast_api_multistage_build"
+    )
+    return context
+
+
+def get_fast_api_multistage_image_reference(
+    registry: str,
+    image_version: str,
+    python_version: str,
+    os_variant: str,
+) -> str:
+    reference: str = f"{registry}/fast-api-multistage-build:{image_version}-python{python_version}-{os_variant}"
+    return reference
+
+
+def get_fast_api_multistage_with_json_logging_context() -> Path:
+    context: Path = (
+        Path(__file__).parent.parent.resolve()
+        / "examples"
+        / "fast_api_multistage_build_with_json_logging"
+    )
+    return context
+
+
+def get_fast_api_multistage_with_json_logging_image_reference(
+    registry: str,
+    image_version: str,
+    python_version: str,
+    os_variant: str,
+) -> str:
+    reference: str = f"{registry}/fast_api_multistage_build_with_json_logging:{image_version}-python{python_version}-{os_variant}"
+    return reference

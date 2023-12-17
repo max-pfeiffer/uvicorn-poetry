@@ -9,7 +9,7 @@ FROM ${BASE_IMAGE} as dependencies-build-stage
 COPY ./poetry.lock ./pyproject.toml /application_root/
 RUN poetry install --no-interaction --no-root --without dev
 
-FROM ${BASE_IMAGE} as production-image-with-json-logging
+FROM ${BASE_IMAGE} as production-image
 ENV UVICORN_LOG_CONFIG=/application_server/logging_configuration_file.yaml \
     UVICORN_LOG_LEVEL=trace
 

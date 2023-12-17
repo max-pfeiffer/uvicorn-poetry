@@ -1,47 +1,43 @@
-import pytest
-
-from build.constants import (
-    TARGET_ARCHITECTURES,
-)
-from build.images import (
-    UvicornPoetryImage,
-    FastApiMultistageImage,
-    FastApiMultistageJsonLoggingImage,
-)
 from tests.utils import ImageTagComponents
 
 
-@pytest.mark.parametrize("target_architecture", TARGET_ARCHITECTURES)
-def test_image_versions(target_architecture, version, docker_client):
-    uvicorn_poetry_image_object: UvicornPoetryImage = UvicornPoetryImage(
-        docker_client, target_architecture, version
+def test_build_version(
+    base_image_reference: str,
+    image_version: str,
+    python_version: str,
+    os_variant: str,
+) -> None:
+    components: ImageTagComponents = ImageTagComponents.create_from_reference(
+        base_image_reference
     )
-    assert (
-        uvicorn_poetry_image_object.target_architecture == target_architecture
-    )
-    assert uvicorn_poetry_image_object.version == version
-
-    fastapi_multistage_imageobject: FastApiMultistageImage = (
-        FastApiMultistageImage(docker_client, target_architecture, version)
-    )
-    assert (
-        fastapi_multistage_imageobject.target_architecture
-        == target_architecture
-    )
-    assert fastapi_multistage_imageobject.version == version
-
-    fastapi_multistage_jsonlogging_imageobject: FastApiMultistageJsonLoggingImage = FastApiMultistageJsonLoggingImage(
-        docker_client, target_architecture, version
-    )
-    assert (
-        fastapi_multistage_jsonlogging_imageobject.target_architecture
-        == target_architecture
-    )
-    assert fastapi_multistage_jsonlogging_imageobject.version == version
+    assert components.version == image_version
+    assert components.python_version == python_version
+    assert components.os_variant == os_variant
 
 
-def test_build_version(uvicorn_poetry_image, version) -> None:
-    components: ImageTagComponents = ImageTagComponents.create_from_tag(
-        uvicorn_poetry_image
+def test_example_app_build_version(
+    fast_api_multistage_image_reference: str,
+    image_version: str,
+    python_version: str,
+    os_variant: str,
+) -> None:
+    components: ImageTagComponents = ImageTagComponents.create_from_reference(
+        fast_api_multistage_image_reference
     )
-    assert components.version == version
+    assert components.version == image_version
+    assert components.python_version == python_version
+    assert components.os_variant == os_variant
+
+
+def test_example_app_with_json_logging_build_version(
+    fast_api_multistage_with_json_logging_image_reference: str,
+    image_version: str,
+    python_version: str,
+    os_variant: str,
+) -> None:
+    components: ImageTagComponents = ImageTagComponents.create_from_reference(
+        fast_api_multistage_with_json_logging_image_reference
+    )
+    assert components.version == image_version
+    assert components.python_version == python_version
+    assert components.os_variant == os_variant
