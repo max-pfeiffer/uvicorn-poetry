@@ -6,10 +6,10 @@ from python_on_whales import DockerClient
 
 from build.constants import APPLICATION_SERVER_PORT
 from tests.constants import (
-    SLEEP_TIME,
-    HELLO_WORLD,
     DEFAULT_UVICORN_CONFIG,
     EXPOSED_CONTAINER_PORT,
+    HELLO_WORLD,
+    SLEEP_TIME,
 )
 from tests.utils import UvicornPoetryContainerConfig
 

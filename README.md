@@ -1,3 +1,5 @@
+[![Poetry](https://img.shields.io/endpoint?url=https://python-poetry.org/badge/v0.json)](https://python-poetry.org/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![codecov](https://codecov.io/gh/max-pfeiffer/uvicorn-poetry/branch/main/graph/badge.svg?token=WQI2SJJLZN)](https://codecov.io/gh/max-pfeiffer/uvicorn-poetry)
 ![pipeline workflow](https://github.com/max-pfeiffer/uvicorn-poetry/actions/workflows/pipeline.yml/badge.svg)
 ![Docker Image Size (latest semver)](https://img.shields.io/docker/image-size/pfeiffermax/uvicorn-poetry?sort=semver)
@@ -18,12 +20,16 @@ Any feedback is highly appreciated and will be considered.
 **GitHub Repository:** [https://github.com/max-pfeiffer/uvicorn-poetry](https://github.com/max-pfeiffer/uvicorn-poetry)
 
 ## Docker Image Features
-1. Supported architectures:
-   1. Python v3.9, Debian or Debian-slim
-   2. Python v3.10, Debian or Debian-slim
-2. Poetry is available as Python package dependency management tool
-3. A virtual environment for the application and application server
-4. The application is run with [Uvicorn](https://www.uvicorn.org) as application server
+1. Supported CPU architectures:    
+   1. linux/amd64
+   2. linux/arm64/v8
+2. Python versions:
+    1. 3.10
+    2. 3.11
+    3. 3.12
+3. Poetry v1.7.1 is available as Python package dependency management tool
+4. A virtual environment for the application and application server
+5. The application is run with [Uvicorn](https://www.uvicorn.org) as application server
 
 ## Usage
 You can use the [uvicorn-poetry-fastapi-project-template](https://github.com/max-pfeiffer/uvicorn-poetry-fastapi-project-template) for your convenience.
@@ -54,11 +60,11 @@ The application and test structure needs to be like that:
 ```
 Please be aware that you need to provide a pyproject.toml file to specify your Python package dependencies for Poetry and configure
 dependencies like Pytest. Poetry dependencies must at least contain the following to work:
-* python = "^3.9"
-* uvicorn = "0.18.3"
+* python = "^3.11"
+* uvicorn = "0.24.0"
 
 If your application uses FastAPI framework this needs to be added as well:
-* fastapi = "0.82.0"
+* fastapi = "0.104.1"
 
 **IMPORTANT:** make sure you have a [.dockerignore file](https://github.com/max-pfeiffer/uvicorn-poetry/blob/main/examples/fast_api_multistage_build/.dockerignore)
 in your application root which excludes your local virtual environment in .venv! Otherwise you will have an issue activating that virtual

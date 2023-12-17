@@ -1,5 +1,6 @@
-from random import randrange
 from os import getenv
+from random import randrange
+
 import pytest
 from python_on_whales import Builder, DockerClient
 from semver import VersionInfo

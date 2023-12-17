@@ -2,7 +2,7 @@ from click.testing import CliRunner, Result
 from python_on_whales import DockerException
 
 from build.publish import main
-from tests.constants import REGISTRY_USERNAME, REGISTRY_PASSWORD
+from tests.constants import REGISTRY_PASSWORD, REGISTRY_USERNAME
 from tests.registry_container import DockerRegistryContainer
 
 

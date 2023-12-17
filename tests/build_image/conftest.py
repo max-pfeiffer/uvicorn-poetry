@@ -3,10 +3,10 @@ from os import getenv
 import pytest
 from python_on_whales import Builder, DockerClient
 
-from build.constants import PLATFORMS, APPLICATION_SERVER_PORT
+from build.constants import APPLICATION_SERVER_PORT, PLATFORMS
 from build.utils import (
-    get_image_reference,
     get_context,
+    get_image_reference,
     get_python_poetry_image_reference,
 )
 from tests.constants import REGISTRY_PASSWORD, REGISTRY_USERNAME
