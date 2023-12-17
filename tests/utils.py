@@ -79,7 +79,7 @@ class ImageTagComponents:
         tag_parts: list[str] = tag.split("-")
         version: str = tag_parts[0]
         python_version: str = tag_parts[1].lstrip("python")
-        os_variant: str = f"{tag_parts[-2]}-{tag_parts[-1]}"
+        os_variant: str = "-".join(tag_parts[2:])
         return cls(
             registry=registry,
             image_name=image_name,
