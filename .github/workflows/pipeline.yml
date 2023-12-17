@@ -81,53 +81,53 @@ jobs:
           if-no-files-found: error
           retention-days: 1          
 
-run-publish-image-tests:
-    needs: code-quality
-    runs-on: ubuntu-20.04
-    strategy:
-      fail-fast: false
-      matrix:
-        python_version: ["3.10.13", "3.11.6", "3.12.0"]
-        os_variant: ["bookworm", "slim-bookworm"]
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-      - name: Expose GitHub Runtime
-        uses: crazy-max/ghaction-github-runtime@v3          
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.11
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          version: 1.6.1
-          virtualenvs-in-project: true
-      - name: Load cached venv
-        id: cached-poetry-dependencies
-        uses: actions/cache@v3
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}            
-      - name: Install dependencies
-        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: |
-          poetry install --no-interaction --no-root
-      - name: Run tests for image publishing with pytest
-        env:
-          PYTHON_VERSION: ${{ matrix.python_version }}
-          OS_VARIANT: ${{ matrix.os_variant }}
-          POETRY_VERSION: ${{ matrix.poetry_version }}
-        run: |
-          source .venv/bin/activate
-          pytest tests/publish_image --cov --cov-report=xml:publish_image_coverage_report.xml
-      - name: Upload coverage report to artifactory
-        uses: actions/upload-artifact@v3
-        with:
-          name: publish-image-coverage-report-${{ matrix.python_version }}-${{ matrix.os_variant }}-${{ matrix.poetry_version }}
-          path: publish_image_coverage_report.xml
-          if-no-files-found: error
-          retention-days: 1
+  run-publish-image-tests:
+      needs: code-quality
+      runs-on: ubuntu-20.04
+      strategy:
+        fail-fast: false
+        matrix:
+          python_version: ["3.10.13", "3.11.6", "3.12.0"]
+          os_variant: ["bookworm", "slim-bookworm"]
+      steps:
+        - name: Checkout Repository
+          uses: actions/checkout@v4
+        - name: Expose GitHub Runtime
+          uses: crazy-max/ghaction-github-runtime@v3          
+        - name: Setup Python
+          uses: actions/setup-python@v4
+          with:
+            python-version: 3.11
+        - name: Install Poetry
+          uses: snok/install-poetry@v1
+          with:
+            version: 1.6.1
+            virtualenvs-in-project: true
+        - name: Load cached venv
+          id: cached-poetry-dependencies
+          uses: actions/cache@v3
+          with:
+            path: .venv
+            key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}            
+        - name: Install dependencies
+          if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+          run: |
+            poetry install --no-interaction --no-root
+        - name: Run tests for image publishing with pytest
+          env:
+            PYTHON_VERSION: ${{ matrix.python_version }}
+            OS_VARIANT: ${{ matrix.os_variant }}
+            POETRY_VERSION: ${{ matrix.poetry_version }}
+          run: |
+            source .venv/bin/activate
+            pytest tests/publish_image --cov --cov-report=xml:publish_image_coverage_report.xml
+        - name: Upload coverage report to artifactory
+          uses: actions/upload-artifact@v3
+          with:
+            name: publish-image-coverage-report-${{ matrix.python_version }}-${{ matrix.os_variant }}-${{ matrix.poetry_version }}
+            path: publish_image_coverage_report.xml
+            if-no-files-found: error
+            retention-days: 1
           
   upload-test-coverage-reports:
     needs:
