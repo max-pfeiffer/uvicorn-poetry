@@ -1,4 +1,4 @@
-# The Poetry installation is provided through the base image. Please check the
+# The Poetry installation is provided through the base image. Please check out the
 # base image if you interested in the details.
 # Base image: https://hub.docker.com/r/pfeiffermax/python-poetry
 # Dockerfile: https://github.com/max-pfeiffer/python-poetry/blob/main/build/Dockerfile

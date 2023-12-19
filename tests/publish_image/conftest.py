@@ -1,5 +1,3 @@
-from os import getenv
-
 import pytest
 from click.testing import CliRunner
 

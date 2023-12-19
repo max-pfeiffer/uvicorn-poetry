@@ -43,7 +43,7 @@ target-version = ["py39"]
 [tool.pylint.main]
 errors-only = true
 recursive = "y"
-ignore = "examples"
+ignore-paths = "^examples/.*$"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
