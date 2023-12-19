@@ -16,6 +16,8 @@ from tests.utils import (
     get_fast_api_multistage_image_reference,
     get_fast_api_multistage_with_json_logging_context,
     get_fast_api_multistage_with_json_logging_image_reference,
+    get_fast_api_singlestage_context,
+    get_fast_api_singlestage_image_reference,
 )
 
 
@@ -47,6 +49,17 @@ def registry_container() -> DockerRegistryContainer:
 
 
 @pytest.fixture(scope="package")
+def registry_login(
+    docker_client: DockerClient, registry_container: DockerRegistryContainer
+) -> None:
+    docker_client.login(
+        server=registry_container.get_registry(),
+        username=REGISTRY_USERNAME,
+        password=REGISTRY_PASSWORD,
+    )
+
+
+@pytest.fixture(scope="package")
 def base_image_reference(
     docker_client: DockerClient,
     pow_buildx_builder: Builder,
@@ -55,13 +68,8 @@ def base_image_reference(
     python_version: str,
     os_variant: str,
     cache_settings: tuple,
+    registry_login,
 ) -> str:
-    docker_client.login(
-        server=registry_container.get_registry(),
-        username=REGISTRY_USERNAME,
-        password=REGISTRY_PASSWORD,
-    )
-
     image_reference: str = get_image_reference(
         registry_container.get_registry(),
         image_version,
@@ -88,6 +96,40 @@ def base_image_reference(
 
 
 @pytest.fixture(scope="package")
+def fast_api_singlestage_image_reference(
+    docker_client: DockerClient,
+    pow_buildx_builder: Builder,
+    registry_container: DockerRegistryContainer,
+    image_version: str,
+    python_version: str,
+    os_variant: str,
+    cache_settings: tuple,
+    base_image_reference: str,
+    registry_login,
+) -> str:
+    image_reference: str = get_fast_api_singlestage_image_reference(
+        registry_container.get_registry(),
+        image_version,
+        python_version,
+        os_variant,
+    )
+
+    docker_client.buildx.build(
+        context_path=get_fast_api_singlestage_context(),
+        build_args={
+            "BASE_IMAGE": base_image_reference,
+        },
+        tags=image_reference,
+        platforms=PLATFORMS,
+        builder=pow_buildx_builder,
+        cache_to=cache_settings[0],
+        cache_from=cache_settings[1],
+        push=True,
+    )
+    yield image_reference
+
+
+@pytest.fixture(scope="package")
 def fast_api_multistage_image_reference(
     docker_client: DockerClient,
     pow_buildx_builder: Builder,
@@ -97,13 +139,8 @@ def fast_api_multistage_image_reference(
     os_variant: str,
     cache_settings: tuple,
     base_image_reference: str,
+    registry_login,
 ) -> str:
-    docker_client.login(
-        server=registry_container.get_registry(),
-        username=REGISTRY_USERNAME,
-        password=REGISTRY_PASSWORD,
-    )
-
     image_reference: str = get_fast_api_multistage_image_reference(
         registry_container.get_registry(),
         image_version,
@@ -137,13 +174,8 @@ def fast_api_multistage_with_json_logging_image_reference(
     os_variant: str,
     cache_settings: tuple,
     base_image_reference: str,
+    registry_login,
 ) -> str:
-    docker_client.login(
-        server=registry_container.get_registry(),
-        username=REGISTRY_USERNAME,
-        password=REGISTRY_PASSWORD,
-    )
-
     image_reference: str = (
         get_fast_api_multistage_with_json_logging_image_reference(
             registry_container.get_registry(),

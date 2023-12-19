@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import docker
-from docker.client import DockerClient
 from docker.models.containers import Container
 from docker_image import reference
 
@@ -88,6 +87,25 @@ class ImageTagComponents:
             python_version=python_version,
             os_variant=os_variant,
         )
+
+
+def get_fast_api_singlestage_context() -> Path:
+    context: Path = (
+        Path(__file__).parent.parent.resolve()
+        / "examples"
+        / "fast_api_singlestage_build"
+    )
+    return context
+
+
+def get_fast_api_singlestage_image_reference(
+    registry: str,
+    image_version: str,
+    python_version: str,
+    os_variant: str,
+) -> str:
+    reference: str = f"{registry}/fast-api-singlestage-build:{image_version}-python{python_version}-{os_variant}"
+    return reference
 
 
 def get_fast_api_multistage_context() -> Path:
