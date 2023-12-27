@@ -35,12 +35,14 @@ Any feedback is highly appreciated and will be considered.
    2. linux/arm64/v8
 
 ## Usage
-You can use the [uvicorn-poetry-fastapi-project-template](https://github.com/max-pfeiffer/uvicorn-poetry-fastapi-project-template) for your convenience.
-It requires [Cookiecutter](https://github.com/cookiecutter/cookiecutter).
+The image provides a platform to run your Python application, so it does not provide an application itself.
 
-The image just provides a platform that you can use to build upon your own multistage builds. So it consequently does not contain an
-application itself. Please check out the [example application for multistage builds](https://github.com/max-pfeiffer/uvicorn-poetry/tree/main/examples/fast_api_multistage_build)
-on how to use that image and build containers efficiently.
+Please have a look at the [single stage](https://github.com/max-pfeiffer/uvicorn-poetry/tree/main/examples/fast_api_singlestage_build) and [multi stage](https://github.com/max-pfeiffer/uvicorn-poetry/tree/main/examples/fast_api_multistage_build) example to learn how to use the image.
+
+The [multi stage approach](https://github.com/max-pfeiffer/uvicorn-poetry/tree/main/examples/fast_api_multistage_build)
+is a bit more efficient with regard to build time. It caches the Python package dependencies in a separate build stage.
+
+You can also use the [uvicorn-poetry-fastapi-project-template](https://github.com/max-pfeiffer/uvicorn-poetry-fastapi-project-template) for your convenience (requires [Cookiecutter](https://github.com/cookiecutter/cookiecutter)). The generated project basically contains the Dockerfile of this image and production image is build upon the standard Python image which results in an even smaller image size eventually.
 
 Please be aware that your application needs an application layout without src folder which is proposed in
 [fastapi-realworld-example-app](https://github.com/nsidnev/fastapi-realworld-example-app).
