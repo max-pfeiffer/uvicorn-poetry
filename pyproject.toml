@@ -11,7 +11,7 @@ click = "8.1.7"
 python-on-whales = "0.68.0"
 
 [tool.poetry.dev-dependencies]
-pytest = "7.4.3"
+pytest = "7.4.4"
 pytest-cov = "4.1.0"
 pytest-dotenv = "0.5.2"
 coverage = "7.4.0"
