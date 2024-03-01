@@ -8,7 +8,7 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "3.11.*"
 click = "8.1.7"
-python-on-whales = "0.68.0"
+python-on-whales = "0.69.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "8.0.0"
