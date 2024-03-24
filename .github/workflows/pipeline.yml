@@ -27,11 +27,9 @@ jobs:
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: |
           poetry install --no-interaction --no-root
-      - name: Run pylint and black
+      - name: Run pre-commit hooks
         run: |
-          source .venv/bin/activate
-          pylint build tests
-          black --check .
+          poetry run pre-commit run -a
 
   run-build-image-tests:
     needs: code-quality
@@ -71,8 +69,7 @@ jobs:
           OS_VARIANT: ${{ matrix.os_variant }}
           POETRY_VERSION: ${{ matrix.poetry_version }}
         run: |
-          source .venv/bin/activate
-          pytest tests/build_image --cov --cov-report=xml:build_image_coverage_report.xml
+          poetry run pytest tests/build_image --cov --cov-report=xml:build_image_coverage_report.xml
       - name: Upload coverage report to artifactory
         uses: actions/upload-artifact@v3
         with:
@@ -119,8 +116,7 @@ jobs:
             OS_VARIANT: ${{ matrix.os_variant }}
             POETRY_VERSION: ${{ matrix.poetry_version }}
           run: |
-            source .venv/bin/activate
-            pytest tests/publish_image --cov --cov-report=xml:publish_image_coverage_report.xml
+            poetry run pytest tests/publish_image --cov --cov-report=xml:publish_image_coverage_report.xml
         - name: Upload coverage report to artifactory
           uses: actions/upload-artifact@v3
           with:

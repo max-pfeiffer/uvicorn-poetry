@@ -1,3 +1,5 @@
+"""Tests for image publishing using CLI options."""
+
 from click.testing import CliRunner, Result
 from python_on_whales import DockerException
 
@@ -12,6 +14,14 @@ def test_registry_with_credentials(
     python_version: str,
     os_variant: str,
 ):
+    """Test for using a Docker registry with credentials.
+
+    :param cli_runner:
+    :param image_version:
+    :param python_version:
+    :param os_variant:
+    :return:
+    """
     with DockerRegistryContainer(
         username=REGISTRY_USERNAME, password=REGISTRY_PASSWORD
     ).with_bind_ports(5000, 5000) as docker_registry:
@@ -41,6 +51,14 @@ def test_registry_with_wrong_credentials(
     python_version: str,
     os_variant: str,
 ):
+    """Test for using a Docker registry with credentials.
+
+    :param cli_runner:
+    :param image_version:
+    :param python_version:
+    :param os_variant:
+    :return:
+    """
     with DockerRegistryContainer(
         username=REGISTRY_USERNAME, password=REGISTRY_PASSWORD
     ).with_bind_ports(5000, 5000) as docker_registry:

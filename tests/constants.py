@@ -1,3 +1,5 @@
+"""Contants for tests."""
+
 from build.constants import APPLICATION_SERVER_PORT
 
 SLEEP_TIME: float = 4.0

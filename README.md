@@ -1,5 +1,5 @@
 [![Poetry](https://img.shields.io/endpoint?url=https://python-poetry.org/badge/v0.json)](https://python-poetry.org/)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![codecov](https://codecov.io/gh/max-pfeiffer/uvicorn-poetry/branch/main/graph/badge.svg?token=WQI2SJJLZN)](https://codecov.io/gh/max-pfeiffer/uvicorn-poetry)
 ![pipeline workflow](https://github.com/max-pfeiffer/uvicorn-poetry/actions/workflows/pipeline.yml/badge.svg)
 ![Docker Image Size (latest semver)](https://img.shields.io/docker/image-size/pfeiffermax/uvicorn-poetry?sort=semver)

@@ -1,3 +1,5 @@
+"""Test fixtures for image build."""
+
 from os import getenv
 
 import pytest
@@ -23,13 +25,17 @@ from tests.utils import (
 
 @pytest.fixture(scope="session")
 def cache_settings(python_version: str, os_variant: str) -> tuple:
+    """Fixture for providing cache settings.
+
+    :param python_version:
+    :param os_variant:
+    :return:
+    """
     github_ref_name: str = getenv("GITHUB_REF_NAME")
     cache_scope: str = f"{python_version}-{os_variant}"
 
     if github_ref_name:
-        cache_to: str = (
-            f"type=gha,mode=max,scope={github_ref_name}-{cache_scope}"
-        )
+        cache_to: str = f"type=gha,mode=max,scope={github_ref_name}-{cache_scope}"
         cache_from: str = f"type=gha,scope={github_ref_name}-{cache_scope}"
     else:
         cache_to = f"type=local,mode=max,dest=/tmp,scope={cache_scope}"
@@ -40,6 +46,10 @@ def cache_settings(python_version: str, os_variant: str) -> tuple:
 
 @pytest.fixture(scope="package")
 def registry_container() -> DockerRegistryContainer:
+    """Fixture for providing a running registry container.
+
+    :return:
+    """
     registry_container = DockerRegistryContainer(
         username=REGISTRY_USERNAME, password=REGISTRY_PASSWORD
     ).with_bind_ports(5000, 5000)
@@ -52,6 +62,12 @@ def registry_container() -> DockerRegistryContainer:
 def registry_login(
     docker_client: DockerClient, registry_container: DockerRegistryContainer
 ) -> None:
+    """Fixture login into registry container.
+
+    :param docker_client:
+    :param registry_container:
+    :return:
+    """
     docker_client.login(
         server=registry_container.get_registry(),
         username=REGISTRY_USERNAME,
@@ -70,6 +86,18 @@ def base_image_reference(
     cache_settings: tuple,
     registry_login,
 ) -> str:
+    """Fixture providing a base image build.
+
+    :param docker_client:
+    :param pow_buildx_builder:
+    :param image_version:
+    :param registry_container:
+    :param python_version:
+    :param os_variant:
+    :param cache_settings:
+    :param registry_login:
+    :return:
+    """
     image_reference: str = get_image_reference(
         registry_container.get_registry(),
         image_version,
@@ -80,9 +108,7 @@ def base_image_reference(
     docker_client.buildx.build(
         context_path=get_context(),
         build_args={
-            "BASE_IMAGE": get_python_poetry_image_reference(
-                python_version, os_variant
-            ),
+            "BASE_IMAGE": get_python_poetry_image_reference(python_version, os_variant),
             "APPLICATION_SERVER_PORT": APPLICATION_SERVER_PORT,
         },
         tags=image_reference,
@@ -107,6 +133,19 @@ def fast_api_singlestage_image_reference(
     base_image_reference: str,
     registry_login,
 ) -> str:
+    """Fixture providing a single stage image build for example application.
+
+    :param docker_client:
+    :param pow_buildx_builder:
+    :param registry_container:
+    :param image_version:
+    :param python_version:
+    :param os_variant:
+    :param cache_settings:
+    :param base_image_reference:
+    :param registry_login:
+    :return:
+    """
     image_reference: str = get_fast_api_singlestage_image_reference(
         registry_container.get_registry(),
         image_version,
@@ -141,6 +180,19 @@ def fast_api_multistage_image_reference(
     base_image_reference: str,
     registry_login,
 ) -> str:
+    """Fixture providing a multi-stage image build for example application.
+
+    :param docker_client:
+    :param pow_buildx_builder:
+    :param registry_container:
+    :param image_version:
+    :param python_version:
+    :param os_variant:
+    :param cache_settings:
+    :param base_image_reference:
+    :param registry_login:
+    :return:
+    """
     image_reference: str = get_fast_api_multistage_image_reference(
         registry_container.get_registry(),
         image_version,
@@ -176,13 +228,24 @@ def fast_api_multistage_with_json_logging_image_reference(
     base_image_reference: str,
     registry_login,
 ) -> str:
-    image_reference: str = (
-        get_fast_api_multistage_with_json_logging_image_reference(
-            registry_container.get_registry(),
-            image_version,
-            python_version,
-            os_variant,
-        )
+    """Fixture providing a multi-stage image build with JSON logging.
+
+    :param docker_client:
+    :param pow_buildx_builder:
+    :param registry_container:
+    :param image_version:
+    :param python_version:
+    :param os_variant:
+    :param cache_settings:
+    :param base_image_reference:
+    :param registry_login:
+    :return:
+    """
+    image_reference: str = get_fast_api_multistage_with_json_logging_image_reference(
+        registry_container.get_registry(),
+        image_version,
+        python_version,
+        os_variant,
     )
 
     docker_client.buildx.build(

@@ -1,3 +1,5 @@
+"""Tests for default configuration."""
+
 import json
 from time import sleep
 
@@ -18,6 +20,12 @@ def test_fast_api_singlestage_image(
     docker_client: DockerClient,
     fast_api_singlestage_image_reference: str,
 ) -> None:
+    """Test default configuration for single stage image.
+
+    :param docker_client:
+    :param fast_api_singlestage_image_reference:
+    :return:
+    """
     with docker_client.container.run(
         fast_api_singlestage_image_reference,
         detach=True,
@@ -30,17 +38,14 @@ def test_fast_api_singlestage_image(
             UvicornPoetryContainerConfig(container.id)
         )
 
-        assert (
-            f"{APPLICATION_SERVER_PORT}/tcp"
-            in container.config.exposed_ports.keys()
-        )
+        assert f"{APPLICATION_SERVER_PORT}/tcp" in container.config.exposed_ports.keys()
 
         response = requests.get(f"http://127.0.0.1:{EXPOSED_CONTAINER_PORT}")
         assert json.loads(response.text) == HELLO_WORLD
 
-        config_data: dict[
-            str, str
-        ] = uvicorn_gunicorn_container_config.get_uvicorn_conf()
+        config_data: dict[str, str] = (
+            uvicorn_gunicorn_container_config.get_uvicorn_conf()
+        )
         assert config_data["workers"] == DEFAULT_UVICORN_CONFIG["workers"]
         assert config_data["host"] == DEFAULT_UVICORN_CONFIG["host"]
         assert config_data["port"] == DEFAULT_UVICORN_CONFIG["port"]
@@ -50,6 +55,12 @@ def test_fast_api_multistage_image(
     docker_client: DockerClient,
     fast_api_multistage_image_reference: str,
 ) -> None:
+    """Test default configuration for multi-stage image.
+
+    :param docker_client:
+    :param fast_api_multistage_image_reference:
+    :return:
+    """
     with docker_client.container.run(
         fast_api_multistage_image_reference,
         detach=True,
@@ -62,17 +73,14 @@ def test_fast_api_multistage_image(
             UvicornPoetryContainerConfig(container.id)
         )
 
-        assert (
-            f"{APPLICATION_SERVER_PORT}/tcp"
-            in container.config.exposed_ports.keys()
-        )
+        assert f"{APPLICATION_SERVER_PORT}/tcp" in container.config.exposed_ports.keys()
 
         response = requests.get(f"http://127.0.0.1:{EXPOSED_CONTAINER_PORT}")
         assert json.loads(response.text) == HELLO_WORLD
 
-        config_data: dict[
-            str, str
-        ] = uvicorn_gunicorn_container_config.get_uvicorn_conf()
+        config_data: dict[str, str] = (
+            uvicorn_gunicorn_container_config.get_uvicorn_conf()
+        )
         assert config_data["workers"] == DEFAULT_UVICORN_CONFIG["workers"]
         assert config_data["host"] == DEFAULT_UVICORN_CONFIG["host"]
         assert config_data["port"] == DEFAULT_UVICORN_CONFIG["port"]
