@@ -1,13 +1,17 @@
+"""Image publishing."""
+
+from os import getenv
+from pathlib import Path
+
 import click
-from build.constants import PLATFORMS, APPLICATION_SERVER_PORT
+from python_on_whales import Builder, DockerClient
+
+from build.constants import APPLICATION_SERVER_PORT, PLATFORMS
 from build.utils import (
     get_context,
     get_image_reference,
     get_python_poetry_image_reference,
 )
-from pathlib import Path
-from python_on_whales import DockerClient, Builder
-from os import getenv
 
 
 @click.command()
@@ -21,9 +25,7 @@ from os import getenv
     envvar="DOCKER_HUB_PASSWORD",
     help="Docker Hub password",
 )
-@click.option(
-    "--version-tag", envvar="GIT_TAG_NAME", required=True, help="Version tag"
-)
+@click.option("--version-tag", envvar="GIT_TAG_NAME", required=True, help="Version tag")
 @click.option(
     "--python-version",
     envvar="PYTHON_VERSION",
@@ -47,6 +49,16 @@ def main(
     os_variant: str,
     registry: str,
 ) -> None:
+    """Build Docker image.
+
+    :param docker_hub_username:
+    :param docker_hub_password:
+    :param version_tag:
+    :param python_version:
+    :param os_variant:
+    :param registry:
+    :return:
+    """
     github_ref_name: str = getenv("GITHUB_REF_NAME")
     context: Path = get_context()
     image_reference: str = get_image_reference(
@@ -55,9 +67,7 @@ def main(
     cache_scope: str = f"{python_version}-{os_variant}"
 
     if github_ref_name:
-        cache_to: str = (
-            f"type=gha,mode=max,scope={github_ref_name}-{cache_scope}"
-        )
+        cache_to: str = f"type=gha,mode=max,scope={github_ref_name}-{cache_scope}"
         cache_from: str = f"type=gha,scope={github_ref_name}-{cache_scope}"
     else:
         cache_to = f"type=local,mode=max,dest=/tmp,scope={cache_scope}"
@@ -77,9 +87,7 @@ def main(
     docker_client.buildx.build(
         context_path=context,
         build_args={
-            "BASE_IMAGE": get_python_poetry_image_reference(
-                python_version, os_variant
-            ),
+            "BASE_IMAGE": get_python_poetry_image_reference(python_version, os_variant),
             "APPLICATION_SERVER_PORT": APPLICATION_SERVER_PORT,
         },
         tags=image_reference,

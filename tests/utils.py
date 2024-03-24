@@ -1,3 +1,5 @@
+"""Utilities for tests."""
+
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -7,22 +9,32 @@ from docker_image import reference
 
 
 class UvicornPoetryContainerConfig:
+    """Class for providing container configuration."""
+
     def __init__(self, container_id: str):
-        self.container: Container = docker.from_env().containers.get(
-            container_id
-        )
+        """Class initializer.
+
+        :param container_id:
+        """
+        self.container: Container = docker.from_env().containers.get(container_id)
 
     def get_uvicorn_processes(self) -> list[str]:
+        """Return uvicorn processes.
+
+        :return:
+        """
         top = self.container.top()
         process_commands: list[str] = [p[7] for p in top["Processes"]]
         uvicorn_processes: list[str] = [
-            p
-            for p in process_commands
-            if "/application_root/.venv/bin/uvicorn" in p
+            p for p in process_commands if "/application_root/.venv/bin/uvicorn" in p
         ]
         return uvicorn_processes
 
     def get_uvicorn_conf(self) -> dict[str, any]:
+        """Return uvicorn configuration.
+
+        :return:
+        """
         uvicorn_config: dict[str, any] = {}
         uvicorn_processes = self.get_uvicorn_processes()
         first_process = uvicorn_processes[0]
@@ -61,6 +73,8 @@ class UvicornPoetryContainerConfig:
 
 @dataclass
 class ImageTagComponents:
+    """Class for parsing and providing image tag components."""
+
     registry: str
     image_name: str
     tag: str
@@ -70,6 +84,11 @@ class ImageTagComponents:
 
     @classmethod
     def create_from_reference(cls, tag: str):
+        """Instantiate a class using an image tag.
+
+        :param tag:
+        :return:
+        """
         ref = reference.Reference.parse(tag)
         registry: str = ref.repository["domain"]
         image_name: str = ref.repository["path"]
@@ -90,6 +109,10 @@ class ImageTagComponents:
 
 
 def get_fast_api_singlestage_context() -> Path:
+    """Return Docker build context for single stage example app.
+
+    :return:
+    """
     context: Path = (
         Path(__file__).parent.parent.resolve()
         / "examples"
@@ -104,11 +127,26 @@ def get_fast_api_singlestage_image_reference(
     python_version: str,
     os_variant: str,
 ) -> str:
-    reference: str = f"{registry}/fast-api-singlestage-build:{image_version}-python{python_version}-{os_variant}"
+    """Return image reference for single stage example app.
+
+    :param registry:
+    :param image_version:
+    :param python_version:
+    :param os_variant:
+    :return:
+    """
+    reference: str = (
+        f"{registry}/fast-api-singlestage-build:{image_version}"
+        f"-python{python_version}-{os_variant}"
+    )
     return reference
 
 
 def get_fast_api_multistage_context() -> Path:
+    """Return Docker build context for multi-stage example app.
+
+    :return:
+    """
     context: Path = (
         Path(__file__).parent.parent.resolve()
         / "examples"
@@ -123,11 +161,26 @@ def get_fast_api_multistage_image_reference(
     python_version: str,
     os_variant: str,
 ) -> str:
-    reference: str = f"{registry}/fast-api-multistage-build:{image_version}-python{python_version}-{os_variant}"
+    """Return image reference for multi-stage example app.
+
+    :param registry:
+    :param image_version:
+    :param python_version:
+    :param os_variant:
+    :return:
+    """
+    reference: str = (
+        f"{registry}/fast-api-multistage-build:{image_version}"
+        f"-python{python_version}-{os_variant}"
+    )
     return reference
 
 
 def get_fast_api_multistage_with_json_logging_context() -> Path:
+    """Return Docker build context for multi-stage example app with JSON logging.
+
+    :return:
+    """
     context: Path = (
         Path(__file__).parent.parent.resolve()
         / "examples"
@@ -142,5 +195,16 @@ def get_fast_api_multistage_with_json_logging_image_reference(
     python_version: str,
     os_variant: str,
 ) -> str:
-    reference: str = f"{registry}/fast_api_multistage_build_with_json_logging:{image_version}-python{python_version}-{os_variant}"
+    """Return image reference for multi-stage example app with JSON logging.
+
+    :param registry:
+    :param image_version:
+    :param python_version:
+    :param os_variant:
+    :return:
+    """
+    reference: str = (
+        f"{registry}/fast_api_multistage_build_with_json_logging:{image_version}"
+        f"-python{python_version}-{os_variant}"
+    )
     return reference

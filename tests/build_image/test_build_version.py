@@ -1,3 +1,5 @@
+"""Tests checking the build version."""
+
 from tests.utils import ImageTagComponents
 
 
@@ -7,6 +9,14 @@ def test_build_version(
     python_version: str,
     os_variant: str,
 ) -> None:
+    """Test for checking the build version of base image.
+
+    :param base_image_reference:
+    :param image_version:
+    :param python_version:
+    :param os_variant:
+    :return:
+    """
     components: ImageTagComponents = ImageTagComponents.create_from_reference(
         base_image_reference
     )
@@ -21,6 +31,14 @@ def test_example_app_singlestage_build_version(
     python_version: str,
     os_variant: str,
 ) -> None:
+    """Test for checking the build version of single stage image.
+
+    :param fast_api_singlestage_image_reference:
+    :param image_version:
+    :param python_version:
+    :param os_variant:
+    :return:
+    """
     components: ImageTagComponents = ImageTagComponents.create_from_reference(
         fast_api_singlestage_image_reference
     )
@@ -35,6 +53,14 @@ def test_example_app_multistage__build_version(
     python_version: str,
     os_variant: str,
 ) -> None:
+    """Test for checking the build version of multi-stage image.
+
+    :param fast_api_multistage_image_reference:
+    :param image_version:
+    :param python_version:
+    :param os_variant:
+    :return:
+    """
     components: ImageTagComponents = ImageTagComponents.create_from_reference(
         fast_api_multistage_image_reference
     )
@@ -49,6 +75,14 @@ def test_example_app_with_json_logging_build_version(
     python_version: str,
     os_variant: str,
 ) -> None:
+    """Test for checking the build version of multi-stage image with JSON logging.
+
+    :param fast_api_multistage_with_json_logging_image_reference:
+    :param image_version:
+    :param python_version:
+    :param os_variant:
+    :return:
+    """
     components: ImageTagComponents = ImageTagComponents.create_from_reference(
         fast_api_multistage_with_json_logging_image_reference
     )
