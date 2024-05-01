@@ -908,39 +908,46 @@ files = [
 
 [[package]]
 name = "testcontainers"
-version = "4.1.1"
+version = "4.4.0"
 description = "Python library for throwaway instances of anything that can run in a Docker container"
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "testcontainers-4.1.1-py3-none-any.whl", hash = "sha256:9105b1807cbd0a4e0bfe084c2159754554bc5264ff8173c32f88b0a91e6a5e7c"},
-    {file = "testcontainers-4.1.1.tar.gz", hash = "sha256:6c20bde6e040a0fea0ddfaa80492bcde105251b8a59a1325bb1a6fdffe0e62ad"},
+    {file = "testcontainers-4.4.0-py3-none-any.whl", hash = "sha256:455e0e28bbf9dcf2d66a342e3103b0d8889db3295a490c009a98848e08791837"},
+    {file = "testcontainers-4.4.0.tar.gz", hash = "sha256:f4e87c3831991f9b4d5b6544d0f438fbfd140a74c834b13efb15a2f7c89833c4"},
 ]
 
 [package.dependencies]
 docker = "*"
+typing-extensions = "*"
 urllib3 = "*"
 wrapt = "*"
 
 [package.extras]
 arangodb = ["python-arango (>=7.8,<8.0)"]
 azurite = ["azure-storage-blob (>=12.19,<13.0)"]
+chroma = ["chromadb-client"]
 clickhouse = ["clickhouse-driver"]
-google = ["google-cloud-pubsub (>=2)"]
+google = ["google-cloud-datastore (>=2)", "google-cloud-pubsub (>=2)"]
+influxdb = ["influxdb", "influxdb-client"]
 k3s = ["kubernetes", "pyyaml"]
-kafka = ["kafka-python"]
 keycloak = ["python-keycloak"]
 localstack = ["boto3"]
 minio = ["minio"]
 mongodb = ["pymongo"]
 mssql = ["pymssql", "sqlalchemy"]
 mysql = ["pymysql[rsa]", "sqlalchemy"]
+nats = ["nats-py"]
 neo4j = ["neo4j"]
 opensearch = ["opensearch-py"]
-oracle = ["cx_Oracle", "sqlalchemy"]
+oracle = ["oracledb", "sqlalchemy"]
+oracle-free = ["oracledb", "sqlalchemy"]
+qdrant = ["qdrant-client"]
 rabbitmq = ["pika"]
 redis = ["redis"]
+registry = ["bcrypt"]
 selenium = ["selenium"]
+weaviate = ["weaviate-client (>=4.5.4,<5.0.0)"]
 
 [[package]]
 name = "tomli"
@@ -1124,4 +1131,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "3.11.*"
-content-hash = "21a21c72a4b4330f2cd03ce2fad8c09d3bf36f62c91c4529c9253c033b51c880"
+content-hash = "3e3aea0bd1db374fd72af364cf9b9e9f5a790a04c39e08a5411d7f4770ae7b6c"
