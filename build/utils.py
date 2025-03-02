@@ -43,7 +43,7 @@ def get_python_poetry_image_reference(
     :return:
     """
     reference: str = (
-        f"pfeiffermax/python-poetry:1.10.0-poetry1.8.2-python"
+        f"pfeiffermax/python-poetry:1.15.0-poetry2.1.1-python"
         f"{python_version}-{os_variant}"
     )
     return reference
