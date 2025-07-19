@@ -643,13 +643,13 @@ cli = ["click (>=5.0)"]
 
 [[package]]
 name = "python-on-whales"
-version = "0.70.1"
+version = "0.71.0"
 description = "A Docker client for Python, designed to be fun and intuitive!"
 optional = false
 python-versions = "<4,>=3.8"
 files = [
-    {file = "python-on-whales-0.70.1.tar.gz", hash = "sha256:1e7ac35cd16afaad8d23f01be860cb3ff906ee81816d032a327d4d07da1f9341"},
-    {file = "python_on_whales-0.70.1-py3-none-any.whl", hash = "sha256:3cecd833359d90fd564cadf7f5e3c88209f8baf998316e0731f3d375d17af2f2"},
+    {file = "python_on_whales-0.71.0-py3-none-any.whl", hash = "sha256:9d23c025e2e887f8336fbdd324ce764e72e60f7db2d0599601e8f6ddac1cae2d"},
+    {file = "python_on_whales-0.71.0.tar.gz", hash = "sha256:0967be1b716f4a40e44a4b3bf091f721b494205425c1215f64a1a612eb932900"},
 ]
 
 [package.dependencies]
@@ -1124,4 +1124,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "3.11.*"
-content-hash = "21a21c72a4b4330f2cd03ce2fad8c09d3bf36f62c91c4529c9253c033b51c880"
+content-hash = "e0372615c95fc18904fe871166d61863bc7194dc6231f3dc298a74422809a3e8"
